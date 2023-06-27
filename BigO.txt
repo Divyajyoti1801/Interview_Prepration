@@ -1,0 +1,3 @@
+WHAT IS GOOD CODE?
+    - Readable
+    - Scalable (Big'O' defined scalability)
