@@ -1,5 +1,18 @@
 #Big 'O' notation Coding examples
+"""
+Why is DSA important?
+    - Make you a better Software Development.
+    - Helps you in getting a job.
+    - Winning Sport of Competitive Coding.
 
+RoadMap To Learn Data Structure
+    - Learn one programming language.
+    - Learn DSA basics and implement
+    - Learn languages libraries that have DSA implemented for you
+    - Do Practice and Learning together.
+
+Every thing is primitive in python.
+"""
 """
 Big-O Asymptotic Notation
     - it is use for comparing code1 an code2 mathematically.
@@ -8,7 +21,6 @@ Big-O Asymptotic Notation
     - Big O means worst case scenario
 
 O(1) < O(log(n)) < O(n) < O(nlog(n)) < O(n^2) < O(2^n) < O(n!)
-
 """
 
 print("Hello World")
