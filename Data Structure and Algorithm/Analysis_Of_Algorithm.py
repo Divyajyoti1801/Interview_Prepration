@@ -78,4 +78,19 @@ BIG THETA Notation
     - Represents Exact Bond
 """
 
+"""
+ANALYSIS OF ALGORITHM:
+
+    Recursion Tree Method:
+        - We write non-recursive part as root of tree and recursive parts as children.
+        - We keep expanding children until we see a pattern.
+"""
  
+def fun_4(n):
+    if n==1:
+        return
+    for i in range(n):
+        print("GFG")
+    fun_4(n/2)
+    fun_4(n/2)
+
