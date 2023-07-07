@@ -147,8 +147,8 @@ Efficient Solution Algo:
             x * x <= n  
             x <= sqrt(n)  
 """
-def divisor_of_number(n):
-    i=1
+def   divisor_of_number(n):
+    i=1 
     while( i * i <=n):
         if( n % i == 0):
             print(i)
@@ -156,3 +156,75 @@ def divisor_of_number(n):
                 print(n/i)
         i+=1
 # Time Complexity: theta(n^(1/2))
+
+# SIEVE OF ERATOSTHENES
+"""
+Problem Statement: Find prime numbers until that  number.
+"""
+def sieve_of_eratosthenes(num):
+    if num<=1:
+        return
+    prime = [True for i in range(num+1)]
+    p=2
+    while(p * p <= num):
+        if(prime[p] == True):
+            for i in range(p * p, num+1, p):
+                prime[i] =  False
+        p += 1
+    
+    for p in range(2, num+1):
+        if prime[p]:
+            print(p)
+# Time Complexity: O(n log(log(n)))
+print(sieve_of_eratosthenes(20))
+
+# COMPUTING POWER
+"""
+Problem Statement: compute the power of given number.
+I/P: x=2 , n=3
+O/P: x=3 , n=4
+"""
+def computing_power(x,n):
+    if (n==0):
+        return 1
+    temp = 0
+    temp = computing_power(x,int(n/2))
+    if(n % 2 == 0):
+        return temp * temp
+    else:
+        return x * temp * temp
+# Time Complexity: O(log(n))
+print(computing_power(2,3))
+
+# Iterative Power
+"""
+Problem Statement: Computer power of a given number with the help iterative power.
+
+Concept:
+    - Every number can be written as sum of powers of 2, for example: 19 = 16 + 2 + 1
+    - We can traverse through all bits of a numbers (LSB to MSB) in O(log n)
+    - Lowest Significant Bit
+    - Most Significant Bit
+"""
+def binary_method(x,n):
+    res = 1
+    while n > 0:
+        if (n % 2 != 0):
+            res *= x
+        x *= x
+        n //= 2
+    return res
+"""
+if modulo is given:
+
+def binary_method(x,n,m):
+    res = 1
+    while n > 0:
+        if n & 1:
+            res = (res * x) % m
+        x = (x * x) % m
+        n = n >> 1
+    return res
+"""
+# Time Complexity: O(log(n))
+print(binary_method(2,3))
