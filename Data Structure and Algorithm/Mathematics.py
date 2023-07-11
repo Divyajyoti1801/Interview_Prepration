@@ -118,7 +118,7 @@ def check_prime_number(n):
             return False
         i+=6
     return True
-print(check_prime_number(14))
+print("IS PRIME: ",check_prime_number(73))
 
 # Prime Factorization
 """
