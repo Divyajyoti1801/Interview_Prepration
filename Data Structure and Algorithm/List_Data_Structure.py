@@ -146,3 +146,71 @@ def get_smaller_elements(list_1,x):
     return result_list
 
 print(get_smaller_elements([8,100,20,40,3,7],10))
+
+"""
+Slicing (List, Tuple and String)
+
+Concept:
+    - l[start:stop:step]: Gives a list with elements l[start], l[start + step], l[start + 2*stop]... stop is not included (We Stop before step)
+
+I/P : l = [10,20,30,40,50]
+O/P : [10,30,50]
+"""
+list_3=[10,20,30,40,50]
+print(list_3[:4])
+print(list_3[2:])
+print(list_3[1:4])
+print(list_3[4:1:-1])
+print(list_3[::-1]) # reverse of the list
+
+list_c_3=list_3[:]
+print(list_c_3 is list_3) # New List Created
+
+tuple_1 = (10,20,30)
+tuple_c_1 = tuple_1[:]
+print(tuple_1 is tuple_c_1) # No new tuple is created
+
+string_1 = "geeks"
+string_2 = string_1[:]
+print(string_1 is string_2) # No new string is created 
+
+"""
+Comprehensions In Python
+    - it is possible because list,tuple and string are iterable in nature.
+"""
+list_4 = [x for x in range(11) if x % 2 == 0]
+print(list_4)
+
+list_5 = [x for x in range(11) if x % 2 != 0]
+print(list_5)
+
+def get_smaller_compre(l,x):
+    return [e for e in l if e < x]
+print(get_smaller_compre([9,15,12,3,7,11],10))
+
+string_3="geeksforgeeks"
+print([x for x in string_3 if x in "aeiou"])
+
+list_5 = ["geeks","ide","courses","gfg"]
+print([x for x in list_5 if x.startswith("g")])
+print([x.upper() for x in list_5 if x.startswith("g")])
+
+print([x*2 for x in range(6)])
+
+list_6=[1,3,4,2,5]
+print({x:x**3 for x in list_6})
+
+print({x:f"ID{x}" for x in range(5)})
+
+list_7=[101,103,102]
+list_8=["gfg","ide","course"]
+print({list_7[i]:list_8[i] for i in range(len(list_7))})
+
+dict_1=dict(zip(list_7,list_8))
+print(dict_1)
+
+"""
+Dictionary Comprehension
+    - Inverting a dictionary (key becomes value) and value becomes key
+"""
+print({v:k for (k,v) in dict_1.items()})
