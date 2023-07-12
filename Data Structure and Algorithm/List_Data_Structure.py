@@ -214,3 +214,112 @@ Dictionary Comprehension
     - Inverting a dictionary (key becomes value) and value becomes key
 """
 print({v:k for (k,v) in dict_1.items()})
+
+"""
+Largest Element in a List
+
+Problem Statement: Find the largest element in the list.
+
+I/P : l = [10,5,20,8]
+O/P : 20
+"""
+def getMaxOfList(l):
+    if not l:
+        return None
+    else:
+        res=l[0]
+        for i in range(1,len(l)):
+            if l[i]>res:
+                res=l[i]
+        return res;
+print("Largest Element Of The List: ",getMaxOfList([10,5,20,8]))
+
+"""
+Second Largest Element In A List
+
+Problem Statement: find the second largest element of the list.
+
+I/P: l = [10,5,8,20]
+O/P: 12
+"""
+def second_largest(l):
+    if len(l)<=1:
+       return None
+    lar = l[0]
+    slar = None
+   
+    for x in l[1:]:
+        if x > lar:
+            slar= lar
+            lar = x
+        elif x!=lar:
+            if slar == None or slar < x:
+                slar= x
+    return slar
+
+print(second_largest([10,5,8,20]));
+
+"""
+Problem Statement: Check if a list is sorted.
+
+I/P: [10,32,30]
+O/P: True
+"""
+def check_sorted(l):
+    i=1
+    while i < len(l):
+        if l[i] < l[i-1]:
+            return False
+        i+=1
+    return True
+print(check_sorted([10,20,30,15,40]))
+
+"""
+Problem Statement: reverse of the list in python
+"""
+def reverse_list(l):
+    return l[::-1]
+
+def reverse_list_2(l):
+    s=0
+    e = len(l)-1
+    while s<e:
+        l[s],l[e]=l[e],l[s]
+        s=s+1
+        e=e-1
+    return l
+print(reverse_list([10,20,30,40]))
+print(reverse_list_2([10,20,30]))
+
+"""
+Problem Statement: Remove duplicate from a sorted array
+"""
+def remove_duplicate(l):
+    res=1
+    for i in range(1,len(l)):
+        if l[res-1]!=l[i]:
+            l[res]=l[i]
+            res+=1
+    return res;
+
+print(remove_duplicate([10,20,20,30,30,30,30]))
+
+"""
+Problem Statement: left rotate the list by 1
+"""
+
+def left_rotate(l):
+    n = len(l)
+    x = l[0]
+    for i in range(1,n):
+        l[i-1] = l[i]
+    l[n-1] = x
+    return l;
+print(left_rotate([10,20,30,40]))
+
+def left_rotate_2(l):
+    l.append(l.pop(0))
+    return l
+    
+
+print(left_rotate_2([10,20,30,40]))
