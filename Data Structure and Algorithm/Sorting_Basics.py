@@ -136,3 +136,227 @@ def insertion_sort(l):
 list_4 = [20,5,40,60,10,30]
 insertion_sort(list_4)
 print("After Insertion Sort: ",list_4)
+
+"""
+Sorting Algorithm: MERGE SORT ALGORITHM
+    - Divide and Conqueror Algorithm
+    - Stable Algorithm
+    - O(nlog(n)) time complexity and O(n) Auxiliary Space
+    - Used in External Sorting
+    - Outperformed by Quicksort
+"""
+"""
+First Step - 1:
+    Merge Two Sorted Lists
+    
+    I/P: l1 = [10,15], l2 = [5,6,6,30,40]
+    O/P: [5,6,6,10,15,30,40]
+    
+    Time Complexity: O(m+n)
+    Space Complexity: O(n)
+"""
+def merger_sorted_arrays(l1,l2):
+    res=[]
+    i=0 
+    j=0
+    m=len(l1)
+    n=len(l2)
+    
+    while i<m and j<n:
+        if l1[i]<l2[j]:
+            res.append(l1[i])
+            i+=1
+        else:
+            res.append(l2[j])
+            j+=1
+    while i<m:
+        res.append(l1[i])
+        i+=1
+    while j<n:
+        res.append(l2[j])
+        j+=1
+    return res
+print("Merge of Sorted List: ",merger_sorted_arrays([10,15],[5,6,6,30,40]))
+
+"""
+Second Step - 2:
+    Merge Of Subarray
+
+I/P: l1 = [10,15,20,11,13]
+O/P: [10,11,13,15,20]
+
+Time Complexity: O(m+n)
+Auxiliary Space: O(m+n)
+"""
+def merge_sub_array(l,low,mid,high):
+    left=l[low:mid+1]
+    right=l[mid+1:high+1]
+    i=0
+    j=0
+    k=low
+    
+    while i<len(left) and j<len(right):
+        if left[i] <= right[j]:
+            l[k]=left[i]
+            k+=1
+            i+=1
+        else:
+            l[k]=right[j]
+            k+=1
+            j+=1
+    while i<len(left):
+        l[k]=left[i]
+        i+=1
+        k+=1
+    while j<len(right):
+        l[k]=right[j]
+        j+=1
+        k+=1
+
+"""
+Step Three - 3:
+    Merge Sort Recursive function
+    
+    I/P: arr = [10,5,30,15,7]
+    O/P: [5,7,10,15,30]
+
+    Time Complexity: O(nlog(n))
+    Auxiliary Space: O(n)
+
+"""
+def merge_sort(arr,l,r):
+    if r>l:
+        m=(r+l)//2
+        merge_sort(arr,l,m)
+        merge_sort(arr,m+1,r)
+        merge_sub_array(arr,l,m,r)
+
+list_5=[10,5,30,15,7]
+merge_sort(list_5,0,len(list_5)-1)
+print("After MergeSort: ",list_5)
+
+"""
+Problem Statement: union of two sorted lists
+I/P: l1 = [3,5,8] l2 = [2,8,9,10,15]
+O/P: [2,3,5,8,9,10,15]
+
+Time Complexity: O(m+n)
+"""
+def union_of_list(l1,l2):
+    m=len(l1)
+    n=len(l2)
+    i=j=0
+    while i<m and j<n:
+        if(i>0 and l1[i]==l1[i-1]):
+            i+=1
+        elif(j>0 and l2[j]==l2[j-1]):
+            j+=1
+        elif(l1[i]<l2[j]):
+            print(l1[i],end=" ")
+            i+=1
+        elif(l1[i]>l2[j]):
+            print(l2[i],end=" ")
+            j+=1
+        else:
+            print(l1[i],end=" ")
+            i+=1
+            j+=1
+    
+    while i<len(l1):
+        if(i>0 and l1[i]!=l1[i-1]):
+            print(l1[i],end=" ")
+        i+=1
+    while j<len(l2):
+        if(j>0 and l2[j]!=l2[j-1]):
+            print(l2[j],end=" ")
+        j+=1
+print()
+print("Union of Two Sorted List: ")
+union_of_list([2,20,20,20,40],[1,10,20])
+
+""""
+Problem Statement: Intersection of two sorted array
+
+I/P: l1 = [3,5,10,10,10,15,15,20]
+     l2 = [5,10,10,15,30]
+
+O/P: 5 10 15
+
+Time Complexity: 
+"""
+def intersection_of_list(l1,l2):
+    m=len(l1)
+    n=len(l2)
+    i=j=0
+    while(i<m and j<n):
+        if(i>0 and l1[i-1]==l1[i]):
+            i+=1
+            continue
+        if(l1[i]<l2[j]):
+            i+=1
+        elif l2[j]<l1[i]:
+            j+=1
+        else:
+            print(l1[i],end=" ")
+            i+=1
+            j+=1
+print()
+print("Intersection of Sorted Array: ")
+intersection_of_list([10,20,35,40],[20,35,50,90])
+
+"""
+Problem Statement: Count inversions in an array
+
+Concept: A pair (arr[i],arr[j]) forms an count inversion when i<j and arr[i]>arr[j]
+
+I/P: [2,4,1,3,5]
+O/P: 3
+"""
+def naive_count_inversions(l):
+    n = len(l)
+    res = 0
+    for i in range(n-1):
+        for j in range(i+1,n):
+            if l[i] > l[j]:
+                res+=1
+    return res
+print()
+print("Count Inversions in list Part-1: ",naive_count_inversions([2,4,1,3,5]))
+
+#Efficient Solution
+def count_inversion(arr,l,r):
+    res=0 
+    if(l<r):
+        m = (l+r)//2
+        res += count_inversion(arr,l,m)
+        res += count_inversion(arr,m+1,r)
+        res += count_merge(arr,l,m,r)
+    return res
+
+def count_merge(arr,l,m,r):
+    left=arr[l:m+1]
+    right=arr[m+1:r+1]
+    i=0
+    j=0
+    res=0
+    k=i
+    while (i<len(left) and j<len(right)):
+        if left[i]<=right[j]:
+            arr[k]= left[i]
+            i+=1
+        else:
+            arr[k]=right[j]
+            j+=1
+            res+=(len(left)-i)
+        k+=1
+    while i<len(left):
+        arr[k] = left[i]
+        i+=1
+        k+=1
+    while j<len(right):
+        arr[k]=right[j]
+        j+=1
+        k+=1
+    return res
+
+print("Count Inversion of List Part-2: ",count_inversion([2,4,1,3,5],0,len([2,4,1,3,5])))
