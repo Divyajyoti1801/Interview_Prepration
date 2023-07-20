@@ -339,7 +339,7 @@ def count_merge(arr,l,m,r):
     i=0
     j=0
     res=0
-    k=i
+    k=l
     while (i<len(left) and j<len(right)):
         if left[i]<=right[j]:
             arr[k]= left[i]
@@ -360,3 +360,110 @@ def count_merge(arr,l,m,r):
     return res
 
 print("Count Inversion of List Part-2: ",count_inversion([2,4,1,3,5],0,len([2,4,1,3,5])))
+
+"""
+Problem Statement: Partition a Given Array
+I/P: l = [3,8,6,12,10,7] p=5
+O/P: l = [3,6,7,8,12,10]
+"""
+def partition_list_naive(l,p):
+    n=len(l)
+    l[p],l[n-1]=l[n-1],l[p]
+    temp =[]
+    for x in l:
+        if x<=l[n-1]:
+            temp.append(x)
+    for x in l:
+        if x > l[n-1]:
+            temp.append(x)
+    for i in range(len(l)):
+        l[i]=temp[i]
+print()
+print("Partition of list Naive: ")
+list_6=[5,13,6,9,12,8,11]
+partition_list_naive(list_6,5)
+print(list_6)
+
+"""
+Partition Algorithm: LOMUTO PARTITION
+    - Time Complexity: O(n)
+    - Auxiliary Space: O(1)
+"""
+def lomuto_partition(arr,l,h):
+    pivot = arr[h]
+    i = l-1
+    for j in range(l,h):
+        if arr[j]<pivot:
+            i+=1
+            arr[i],arr[j]=arr[j],arr[i]
+    arr[i+1],arr[h] = arr[h],arr[i+1]
+    return i+1
+
+"""
+Partition Algorithm: HOARE PARTITION
+    - Time Complexity: O(n)
+    - Auxiliary Space: O(1)
+"""
+def hoare_partition(arr,l,h):
+    pivot=arr[l]
+    i = l-1
+    j=h+1
+    while(True):
+        i+=1
+        while arr[i]<pivot:
+            i+=1
+        j-=1
+        while(arr[j]>pivot):
+            j-=1
+        if i>=j:
+            return j
+        arr[i],arr[j]=arr[j],arr[i]
+
+"""
+Sorting Algorithm: QUICK SORT ALGORITHM
+    - Divide and Conqueror
+    - Time Complexity: O(n^2)
+    - Despite O(n^2) worst case, it is considered faster, because of the following reasons.
+        - In-place
+        - Cache Friendly
+        - Average Case is O(nlog(n))
+        - Tail Recursive
+    - Partition is key Function
+    - Time Complexity: O(nlog(n))
+    - Auxiliary Space: O(log(n))
+"""
+# Quick Sort Using Lomuto Partition
+def quick_sort(arr,l,h):
+    if l<h:
+        p = lomuto_partition(arr,l,h)
+        quick_sort(arr,l,p-1)
+        quick_sort(arr,p+1,h)
+
+list_7 = [8,4,7,9,3,10,5]
+quick_sort(list_7,0,len(list_7)-1)
+print()
+print("After Quick Sort: ",list_7)
+
+# Quick Sort Using Hoar's Partition
+def quick_sort_2(arr,l,h):
+    if l<h:
+        p = hoare_partition(arr,l,h)
+        quick_sort_2(arr,l,p)
+        quick_sort_2(arr,p+1,h)
+quick_sort_2(list_7,0,len(list_7)-1)
+print()
+print("After Quick Sort: ",list_7)
+
+"""
+Sorting Algorithm: HEAP SORT
+    - Can be seen as an optimization over selection sort
+    - Two Steps:
+        - Build a Max Heap
+        - Repeatedly SWAP root with last node, reduce heap size by 1 and heapify
+    - Time Complexity: O(nlog(n))
+    - Auxiliary Space: O(1)
+    - Not Stable
+    - Used in Hybrid Sorting Algorithm like as Intro Sort
+"""
+def heap_sort():
+    
