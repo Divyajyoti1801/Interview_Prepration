@@ -465,5 +465,29 @@ Sorting Algorithm: HEAP SORT
     - Not Stable
     - Used in Hybrid Sorting Algorithm like as Intro Sort
 """
-def heap_sort():
+def heap_sort(arr):
+    n = len(arr)
+    for i in range(n//2-1,-1,-1):
+        max_heapify(arr,n,i)
+    for i in range(n-1,0,-1):
+        (arr[i],arr[0]) = (arr[0],arr[i])
+        max_heapify(arr,i,0)
     
+
+def max_heapify(arr,n,i):
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    if left < n and arr[i] < arr[left]:
+        largest = left
+    if right <n and arr[largest] < arr[right]:
+        largest = right
+    
+    if largest != i:
+        (arr[i],arr[largest]) = (arr[largest],arr[i])
+        max_heapify(arr,n,largest)
+
+list_8 = [12,11,13,5,6,7]
+heap_sort(list_8)
+print()
+print("After Heap Sort: ",list_8)
