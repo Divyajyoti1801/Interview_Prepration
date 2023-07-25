@@ -112,3 +112,129 @@ class SelfHash:
     def search(self,x):
         i = x % self.BUCKET
         return x in self.table[i]
+    
+"""
+Open Addressing
+    - No. of slots in Hash Table >= No. of Keys to be inserted
+    - Cache Friendly
+    - Linear Probing Method : For handling collision, linearly search for next empty slot
+    - Hash Function: key % 7
+
+    Search Function: 
+        - We Compute hash function we go to that index and compare if we find, we return True. Otherwise we linearly Hash. We stop when one of the three cases arise, Empty Set, Key Found, Traverse throughout Array.
+    
+    Delete Function:
+        - In Delete Function we used to delete the element but in the hash table we will mark it as delete. So, that it doesn't hamper search function. Because if search see an empty slot it will stop working.
+    
+    Clustering (A problem of Linear Probing)
+        - Quadratic Probing = (H(key) + l^2) % m
+        - Double Hashing = (H1(key) + i*H2(key)) % m
+    
+    Fact: if Load Factor < 0.5 and , m is prime then quadratic probing guarantee to work.
+
+
+    Double Hashing
+        - hash(key,i) = [h1(key) + i*(h2(key))] % m
+        - If h2(key) is relatively prime to m, then it always find a free slot if there is one.
+        - Distributes keys more uniformly than linear probing and quadratic hashing
+        - No Clustering
+        - h2 cannot be zero, h2 = N - (key % N)
+
+        Algorithm Of Double Hashing
+
+            void doubleHashingInsert(key):
+                if (table is full):
+                    return error
+                probe = h1(key), offset = h2(key)
+                
+                while(table[probe] is occupied):
+                    probe = (probe + offset) % m
+                table[probe] = Key
+"""
+"""
+Problem Statement: Find frequencies of Array element.
+
+I/P: l = [10,12,10,15,10,10,20,12,12]
+O/P: 10 - 3, 12 - 3, 15 - 1,20 - 1
+"""
+def frequency_element_naive(l):
+    for i in range(len(l)):
+        flag=False
+        for j in range(i):
+            if l[i] == l[j]:
+                flag=True
+                break
+        if flag == True:
+            continue
+        freq = 1
+        for j in range(i+1,len(l)):
+            if l[i] == l[j]:
+                freq+=1
+        print(l[i]," : ",freq)
+frequency_element_naive([50,50,10,40,10])
+
+def frequency_element(arr):
+    hmp = dict()
+    for i in range(len(arr)):
+        if arr[i] in hmp.keys():
+            hmp[arr[i]]+=1
+        else:
+            hmp[arr[i]] = 1
+    for i in hmp:
+        print(i," : ",hmp[i])
+print()
+frequency_element([50,50,10,40,10])
+# Time Complexity: O(n)
+# Auxiliary Space: O(n)
+
+"""
+Open Addressing Implementation
+    - Using Linear Probing to handle collision
+"""
+
+class OpenAddressHash:
+    def __init__(self,c):
+        self.cap=c
+        self.table = [-1]*c
+        self.size=0
+    
+    def hash(self,x):
+        return x % self.cap
+    
+    def search(self,x):
+        h=self.hash(x)
+        t=self.table
+        i=h
+        while t[i]!=-1:
+            if t[i] == x:
+                return True
+            i = (i+1)%self.cap
+            if i == h:
+                return False
+            return False
+    
+    def insert(self,x):
+        if self.size == self.cap:
+            return False
+        if self.search(x) == True:
+            return False
+        i = self.hash(x)
+        t = self.table
+        while t[i] not in (-1,-2):
+            i = (i+1) % self.cap
+        t[i] = x 
+        self.size = self.size+1
+        return True
+    
+    def remove(self,x):
+        h = self.hash(x)
+        t = self.table
+        i=h
+        while t[i]!=-1:
+            if t[i] == x:
+                t[i] = -2
+                return True
+            i = (i+1)%self.cap
+            if i ==h:
+                return False
+        return False
