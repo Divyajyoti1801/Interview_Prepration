@@ -238,3 +238,27 @@ class OpenAddressHash:
             if i ==h:
                 return False
         return False
+
+"""
+Chaining Vs Open Addressing
+
+Chaining
+    - Hash Table never fills
+    - Less sensitive to hash function 
+    - Poor Cache performance
+    - Extra space for links
+
+Open Addressing
+    - Table may become full and resizing becomes mandatory
+    - Extra care required for clustering
+    - Cache Friendly
+    - Extra space might be needed to achieve same performance as chaining
+"""
+"""
+SETS IN PYTHON
+    - Distinct Elements
+    - Unordered
+    - No Indexing
+    - Union, Intersection, Set Difference etc are fast
+    - Uses Hashing Internally
+"""
