@@ -262,3 +262,85 @@ SETS IN PYTHON
     - Union, Intersection, Set Difference etc are fast
     - Uses Hashing Internally
 """
+set_1={10,20,30}
+print(set_1)
+set_2 =set([20,30,40])
+print(set_2)
+set_3={}
+print(type(set_3))
+set_4 = set()
+print(type(set_4))
+print(set_4)
+set_5={10,20}
+set_5.add(30)
+print(set_5)
+set_5.update([40,50])
+print(set_5)
+set_5.update({60,70},{80,90})
+print(set_5)
+set_5.discard(30)
+print(set_5)
+set_5.remove(20)
+print(set_5)
+set_5.clear()
+print(set_5)
+set_5.add(50)
+print(set_5)
+del set_5
+set_6={10,30,20,40}
+print(len(set_6))
+print(20 in set_6)
+print(50 in set_6)
+set_7={2,4,6,8}
+set_8 = {3,6,9}
+print("Union of the Set: ",set_7 | set_8)
+print("Intersection of the Set: ",set_7 & set_8)
+print("Present in one not in another: ",set_7 - set_8)
+print("Symmetric Difference: ",set_7 ^ set_8)
+print("set_7 is disjoint to set_8: ",set_7.isdisjoint(set_8))
+print("set_7 is subset of set_8: ",set_7<=set_8)
+print("set_7 is proper subset of set_8:",set_7<set_8)
+print("set_7 is superset of set_8:: ",set_7>=set_8)
+print("set_7 is proper superset of set_8: ",set_7>set_8)
+
+"""
+Dictionaries in Python
+    - Collection of key-value Pairs
+    - Unordered
+    - All keys must be repeated 
+    - Values may be repeated
+    - Use Hashing Internally
+"""
+dict_1 = {110:"xyz",101: "abc", 105:"bcd",104:"abc"}
+print(dict_1)
+dict_2 = {}
+dict_2["laptop"]=40000
+dict_2["mobile"]=15000
+dict_2["earphone"]=1000
+print(dict_2)
+print(dict_2["mobile"])
+print(dict_1.get(101))
+print(dict_1.get(112))
+print(dict_1.get(124,"NA"))
+dict_1[101]="wxy"
+print(len(dict_1))
+print(dict_1)
+print(dict_1.pop(105))
+print(dict_1)
+del dict_1[104]
+print(dict_1)
+dict_1[108]="CDE"
+print(dict_1.popitem())
+
+"""
+Problem Statement: Count distinct element in the list.
+
+I/P: l = [10,20,10,30,30,20]
+O/P: 3
+"""
+def count_distinct(l):
+    if len(l)<=0:
+        return 0
+    res = set(l)
+    return len(res)
+print("Count distinct element: ",count_distinct([10,20,10,30,30,20]))
