@@ -24,16 +24,16 @@ class Node:
     def __init__(self,data):
         self.data=data
         self.link=None
-#creating first node of the Linked List
-temp1= Node(10)
-temp2= Node(20)        
-temp3= Node(30)
-temp1.link=temp2  # type: ignore
-temp2.link=temp3 # type: ignore
-head = temp1 #initialization of head
-print("Head of the linked list: ",head.data)
-print("Node-2 : ",head.link.data) # type: ignore
-print("Node-3: ",head.link.link.data) # type: ignore
+# #creating first node of the Linked List
+# temp1= Node(10)
+# temp2= Node(20)        
+# temp3= Node(30)
+# temp1.link=temp2  # type: ignore
+# temp2.link=temp3 # type: ignore
+# head = temp1 #initialization of head
+# print("Head of the linked list: ",head.data)
+# print("Node-2 : ",head.link.data) # type: ignore
+# print("Node-3: ",head.link.link.data) # type: ignore
 
 """
 Application of Linked List Data Structure:
@@ -86,7 +86,7 @@ def search_the_element(head,S):
         count+=1
         temp = temp.link
     return -1
-print("Search the element: ",search_the_element(head,5))
+# print("Search the element: ",search_the_element(head,5))
 
 """
 Problem Statement: Insert at the beginning of the linked List 
@@ -143,13 +143,13 @@ def insert_at_position(head,pos,data):
     temp.link = temp_node
     return head
 
-print()
-print("Major Linked List")
-traversing_of_linkedList(head)
-print()
-head=insert_at_position(head,2,35)
-traversing_of_linkedList(head)
-print()
+# print()
+# print("Major Linked List")
+# traversing_of_linkedList(head)
+# print()
+# head=insert_at_position(head,2,35)
+# traversing_of_linkedList(head)
+# print()
 
 """
 Problem Statement : delete the first node of the linked  list
@@ -161,9 +161,9 @@ def delete_first_node(head):
         return None
     head=head.link
     return head
-print()
-head=delete_first_node(head)
-traversing_of_linkedList(head)
+# print()
+# head=delete_first_node(head)
+# traversing_of_linkedList(head)
 
 """
 Problem Statement: delete the last node of the linked list
@@ -180,9 +180,9 @@ def delete_last_node(head):
         temp=temp.link
     prev.link=None
     return head
-print()
-head=delete_last_node(head)
-traversing_of_linkedList(head)
+# print()
+# head=delete_last_node(head)
+# traversing_of_linkedList(head)
 
 """
 Problem Statement : delete a node with only pointer given to it
@@ -198,3 +198,183 @@ def delete_node_pointer(head,node):
     node.link=temp.link
     return head
 
+"""
+Problem Statement: insert element in array in sorted order
+I/P: 10->20->30->40 x = 25
+O/P: 10->20->25->30->40
+"""
+class Node3:
+    def __init__(self,data):
+        self.data=data
+        self.link=None
+#Initialize of the linked list
+head=Node3(10)
+head.link = Node3(20) # type: ignore
+head.link.link = Node3(30) # type: ignore
+head.link.link.link = Node3(40) # type: ignore
+
+print("Working Linked-List: ")
+traversing_of_linkedList(head)
+
+def insert_sorted_element(head,x):
+    temp_node=Node3(x)
+    if head==None:
+        head=temp_node
+        return head
+    elif x<head.data:
+        temp_node.link=head
+        head = temp_node
+        return head
+    else:
+        # There are elements
+        curr=head.link
+        while curr.link!=None and  curr.link.data<x:
+            curr = curr.link
+        temp_node.link = curr.link
+        curr.link = temp_node
+        return head
+print()
+head = insert_sorted_element(head,25)
+traversing_of_linkedList(head)
+
+"""
+Problem Statement: find the middle of the linked list
+I/P: 10->20->25->30->40->50
+O/P: 30
+"""
+def length_list(head):
+    if head==None:
+        return 0
+    curr = head
+    length = 0
+    while curr.link!=None:
+        length+=1
+        curr = curr.link
+    return length+1
+print()
+print("Length of the list: ",length_list(head))
+
+def middle_of_linked_list(head):
+    if head == None:
+        return -1
+    if head.link == None:
+        return head.data
+    if head.link.link == None:
+        return head.link.data
+    mid = (length_list(head)//2)+1
+    curr = head
+    for i in range(mid+1):
+        curr=curr.link
+    return curr.data
+print()
+print("Middle of the Linked List: ",middle_of_linked_list(head))
+
+"""
+Problem Statement: find the nth from end of Linked List
+I/P: 10->20->30->40->50 n=2 
+O/P: 40
+"""
+def nth_Node(head,pos):
+    length = length_list(head)
+    if length == 0 or pos > length or head == None:
+        return -1
+    itr = (length - pos)+1
+    print(itr)
+    curr = head
+    for i in range(itr-1):
+        curr = curr.link
+    return curr.data
+print()
+traversing_of_linkedList(head)
+print()
+print("nth element from the end: ",nth_Node(head,2))
+
+"""
+Problem Statement: remove duplicates from a sorted list.
+I/P: 10 20 20 30 30 30
+O/P: 10 20 30
+"""
+def remove_duplicate(head):
+    if head==None:
+        return None
+    curr = head
+    while curr!=None and curr.link!=None:
+        if curr.data== curr.link.data:
+            curr.link =  curr.link.link
+        else:
+            curr = curr.link
+    return head
+
+head = Node3(10)
+head.link = Node3(20) # type: ignore
+head.link.link = Node3(20) # type: ignore
+head.link.link.link = Node3(30) # type: ignore
+head.link.link.link.link = Node3(30) # type: ignore
+head.link.link.link.link.link = Node3(30) # type: ignore
+print()
+traversing_of_linkedList(head)
+print()
+head = remove_duplicate(head)
+traversing_of_linkedList(head)
+print()
+
+"""
+Problem Statement: reverse of a linked list
+I/P: 10 20 30 40 
+O/P: 40 30 20 10
+"""
+def reverse_linked_list(head):
+    if head == None:
+        return None
+    prev=None
+    curr=head
+    while curr!=None:
+        nex = curr.link
+        curr.link = prev
+        prev =  curr
+        curr = nex
+    head = prev        
+    return head
+
+head = Node3(10)
+head.link = Node3(20) # type: ignore
+head.link.link = Node3(30) # type: ignore
+head.link.link.link = Node3(40) # type: ignore
+print()
+traversing_of_linkedList(head)
+print()
+print("Reverse the linked list:")
+head = reverse_linked_list(head)
+traversing_of_linkedList(head)
+print("\n")
+
+"""
+Problem Statement: Reverse Linked list in a linked list
+I/P: 10 20 30 40 
+O/P: 40 30 20 10
+"""
+def reverse_linkedList(head):
+    if head == None:
+        return head
+    if head.link == None:
+        return head
+    rest_head = reverse_linkedList(head.link)
+    rest_tail = head.link
+    rest_tail.link = head
+    head.link = None
+    
+    return rest_head
+head = reverse_linkedList(head)
+traversing_of_linkedList(head)
+print()
+"""
+Another Method of Reversing linked list recursively
+"""
+def reverse(curr,prev=None):
+    if curr == None:
+        return prev
+    nex = curr.link
+    curr.link = prev
+    return reverse(nex,curr)
+head = reverse(head)
+traversing_of_linkedList(head)
