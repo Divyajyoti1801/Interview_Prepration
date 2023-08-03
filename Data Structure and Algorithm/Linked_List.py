@@ -378,3 +378,4 @@ def reverse(curr,prev=None):
     return reverse(nex,curr)
 head = reverse(head)
 traversing_of_linkedList(head)
+
