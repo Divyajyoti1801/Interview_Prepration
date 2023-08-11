@@ -123,3 +123,92 @@ def preOrder_traversal(root):
 print("Preorder Traversal of the Binary Tree: ")
 preOrder_traversal(root)
 print()
+
+"""
+Height of the Binary Tree
+    - Conventions
+        = Longest root to leave path
+        = Maximum Number of Edges 
+    
+    Time Complexity: O(n)
+    Auxiliary Space: O(height of the tree)
+"""
+def height_of_tree(root):
+    if root == None:
+        return 0
+    else:
+        lh = height_of_tree(root.left)
+        rh = height_of_tree(root.right)
+        return 1 + max(lh,rh) # type: ignore
+print("Hight of the Tree(Longest root to leave path): ",height_of_tree(root))
+print()
+"""
+Print Node at K-distance
+    Time Complexity: O(n)
+    Auxiliary Space: O(1)
+"""
+def print_k_dist(root,k):
+    if root is None:
+        return
+    if k==0:
+        print(root.data,end=" ")
+    else:
+        print_k_dist(root.left,k-1)
+        print_k_dist(root.right,k-1)
+print("Print Element from the Kth Distance form root: ")
+print_k_dist(root,2)
+print()
+
+"""
+Traversal Method: Breadth First Search
+    - Level Order Traversal
+    
+    Time Complexity: O(n)
+    Auxiliary Space: O(n)
+"""
+from collections import deque
+def level_order_traversal(root):
+    if root is None:
+        return
+    q = deque()
+    q.append(root)
+    while len(q)>0:
+        node = q.popleft()
+        print(node.data,end =" ")
+        if node.left is not None:
+            q.append(node.left)
+        if node.right is not None:
+            q.append(node.right)
+print("Level Order Traversal: ")
+level_order_traversal(root)
+print()
+
+"""
+Size of Binary Tree
+
+    Time Complexity: O(n)
+    Auxiliary Space: O(n)
+"""
+def size_binary_tree(root):
+    if root == None:
+        return 0
+    else:
+        ls = size_binary_tree(root.left)
+        rs = size_binary_tree(root.right)
+        return ls + rs + 1
+print("Size of the tree: ",size_binary_tree(root))
+print()
+
+"""
+Maximum Value of Binary Tree
+"""
+import math
+def max_binary_tree(root):
+    if root==None:
+        return -math.inf
+    else:
+        lm = max_binary_tree(root.left)
+        rm = max_binary_tree(root.right)
+        return max(root.data,lm,rm)
+print("Maximum of Binary Tree: ",max_binary_tree(root))
+print()
