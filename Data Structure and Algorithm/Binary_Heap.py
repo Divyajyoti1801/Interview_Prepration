@@ -110,3 +110,26 @@ class MinHeap:
         else:
             self.decrease_key(i,-math.inf)
             self.extract_min()
+    
+    """
+    Build Heap
+        - Time Complexity: O(n)
+    """
+    def build_heap(self,l=[]):
+        self.arr = l
+        i  = (len(l)-2)//2
+        while i>=0:
+            self.min_heapify(i)
+            i= i-1
+"""
+Implementation of Min-Heap with heapq
+"""
+import heapq
+pq = [5,20,1,30,4]
+heapq.heapify(pq)
+print("After Heapify List: ",pq)
+heapq.heappush(pq,3)
+print("After inserting element in heap: ",pq)
+print("Deleting element from the Heap: ",heapq.heappop(pq))
+print("Largest element from the heap: ",heapq.nlargest(2,pq))
+print("Smallest element from the heap: ",heapq.nsmallest(2,pq))
