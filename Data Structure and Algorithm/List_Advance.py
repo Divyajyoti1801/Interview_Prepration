@@ -57,6 +57,7 @@ def maximum_difference(l):
     return res
 print("Maximum difference (Efficient): ",maximum_difference([2,3,10,6,4,8,1]))
 print()
+
 """
 Problem Statement: Stock buy and sell. Calculate total profit.
 I/P : [1,5,3,8,12]
@@ -155,4 +156,181 @@ print()
 Problem Statement : Longest Even Odd Subarray
 I/P: [10,12,14,7,8]
 O/P: 3
+"""
+def longest_even_odd_subarray_1(l):
+    res = 1
+    for i in range(0,len(l)):
+        curr = 1
+        for j in range(i+1,len(l)):
+            if (l[j]%2==0 and l[j-1]%2!=0) or (l[j]%2!=0 and l[j-1]%2==0):
+                curr+=1
+            else:
+                break
+        res = max(res,curr)
+    return res
+print("Longest even and odd subarray (Naive) O(n^2): ",longest_even_odd_subarray_1([5,10,20,6,3,8]))
+
+#Kadane's Algorithm
+def longest_even_odd_subarray_2(l):
+    res = 1
+    curr = 1
+    for i in range(len(l)):
+        if(l[i]%2==0 and l[i-1]%2!=0) or (l[i]%2!=0 and l[i-1]%2==0):
+            curr+=1
+            res = max(res,curr)
+        else:
+            curr = 1
+    return res
+print("Longest even and odd subarray (Efficient) O(n): ",longest_even_odd_subarray_2([5,10,20,6,3,8]))
+print()
+
+"""
+Problem Statement: Maximum circular subarray sum
+I/P: [5,-2,3,4]
+O/P: 12
+
+Idea for efficient solution: 
+    - Maximum sum of normal subarray:(Kadane's Algorithm)
+    - Maximum sum of a circular subarray: Total_sum - maximum_sum_of_subarray
+"""
+def max_circular_subarray_sum_1(l):
+    res = l[0]
+    for i in range(0,len(l)):
+        curr_max = l[i]
+        curr_sum = l[i]
+        for j in range(1,len(l)):
+            index = (i+j)%len(l) # Circular subarray index
+            curr_sum+=l[index]
+            curr_max = max(curr_max,curr_sum)
+        res = max(res,curr_max)
+    return res
+print("Maximum sum of all circular subarray (Naive) O(n^2): ",max_circular_subarray_sum_1([5,-2,3,4]))
+def max_subarray_sum(l):
+    res = l[0]
+    max_ending = l[0]
+    for i in range(1,len(l)):
+        max_ending = max(max_ending+l[i], l[i])
+        res = max(max_ending,res)
+    return res
+def max_circular_subarray_sum_2(l):
+    max_normal = max_subarray_sum(l)
+    if max_normal<0: # type: ignore
+        return max_normal
+   
+    arr_sum = 0
+    for i in range(0,len(l)):
+        arr_sum+=l[i]
+        l[i]= -l[i]
+    max_circular = arr_sum + max_subarray_sum(l) # type: ignore
+    return max(max_circular,max_normal) 
+print("Maximum sum of all circular subarray (Efficient) O(n): ",max_circular_subarray_sum_2([5,-2,3,4]))
+print()
+
+"""
+Problem Statement: Find the Majority Element
+Majority Element: Majority element is an element that appears more than n/2 times in an array of size n.
+I/P: [8,3,4,8,8]
+O/P: 0,3,4 (any index of 8)
+"""
+def majority_element_1(l):
+    for i in range(0,len(l)):
+        count = 1
+        for j in range(i+1,len(l)):
+            if l[i] == l[j]:
+                count += 1            
+        if count>(len(l)/2):
+            return i
+    return -1
+print("The majority element (Naive) O(n^2): ",majority_element_1([8,3,4,8,8]))
+# Moore's Voting Algorithm
+def majority_element_2(l):
+    res = 0
+    count = 1
+    for i in range(1,len(l)):
+        if l[res] == l[i]:
+            count += 1
+        else:
+            count -= 1
+        if count == 0:
+            res = i
+            count = 1
+    count = 0
+    for i in range(0,len(l)):
+        if l[res] == l[i]:
+            count+=1
+    if count <= (len(l)//2):
+        res = -1
+    return res
+print("The majority element (Efficient) O(n): ",majority_element_2([8,3,4,8,8]))
+print()
+
+"""
+Problem Statement: Given a binary array, we need to find the minimum of number of group flips to make all array elements same.  In a group flip, we can flip any set of consecutive 1s or 0s.
+
+I/P: arr[]  = {1,1,0,0,0,1}
+O/P: From 2 to 4
+"""
+def min_group_flips_1(l):
+    for i in range(1,len(l)):
+        if l[i] != l[i-1]:
+            if l[i] != l[0]:
+                print("From ",i," to",end=" ")
+            else:
+                print(i-1)
+    if l[len(l)-1]!=l[0]:
+        print(len(l)-1)   
+print("Minimum group of flips (efficient): ")
+min_group_flips_1([1,1,0,0,0,1])
+print()
+
+"""
+Problem Statement: Window sliding technique. Find the maximum sun of K consecutive elements
+I/P: [1,8,30,-5,20,7] k=3
+O/P: 45
+"""
+def sliding_window_1(l,k):
+    res = float("-inf")
+    i = 0
+    while(i+k-1<len(l)):
+        curr = 0
+        for j in range(k):
+            curr += l[i+j]
+        res = max(curr,res)
+        i+=1
+    return res
+print("The maximum sum of K consecutive element (Naive) O(n*k): ",sliding_window_1([1,8,30,-5,20,7],3))
+def sliding_window_2(l,k):
+    curr = 0
+    for i in range(k):
+        curr += l[i]
+    res = curr
+    for i in range(k,len(l)):
+        curr = curr + l[i] - l[i-k]
+        res = max(res,curr)
+    return res
+print("The maximum sum of K consecutive element (Efficient) O(n): ",sliding_window_2([1,8,30,-5,20,7],3))
+print()
+
+"""
+Problem Statement: Subarray with given sum. There are no negative elements in the array.
+I/P: [1,4,20,3,5] sum = 33
+O/P: Yes
+"""
+def subarray_with_sum(l,sum):
+    s, curr =0,0
+    for i in range(len(l)):
+        curr += l[i]
+        while curr>sum:
+            curr -= l[s]
+            s += 1
+        if curr == sum:
+            return True
+    return False
+print("Is subarray with given sum exists (Efficient) O(n): ",subarray_with_sum([1,4,20,3,10,5],33))
+
+"""
+Important Problem Statement: (Prefix Sum Technique)
+I/P : arr[] = [2,8,3,9,6,5,4]
+      Queries = getSum(0,2), getSum(1,3), getSum(2,6)
+O/P : 13 20 27
 """
