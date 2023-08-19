@@ -327,10 +327,92 @@ def subarray_with_sum(l,sum):
             return True
     return False
 print("Is subarray with given sum exists (Efficient) O(n): ",subarray_with_sum([1,4,20,3,10,5],33))
+print()
 
 """
 Important Problem Statement: (Prefix Sum Technique)
 I/P : arr[] = [2,8,3,9,6,5,4]
       Queries = getSum(0,2), getSum(1,3), getSum(2,6)
 O/P : 13 20 27
+
+Idea of Prefix Sum:
+    - Pre-compute Prefix Sum Array:
+    - getSum(l,r) = { pSum[r] if l == 0; pSum[r]-pSum[l-1] otherwise}
 """
+# Very Computation heavy, if Array is very large ~10^5
+def prefix_sum_1(l,a,b):
+    res = 0
+    for i in range(a,b+1):
+        res += l[i]
+    return res
+print("Prefix Sum (naive): ",prefix_sum_1([2,8,3,9,6,5,4],0,2))
+
+def get_sum(pSum,a,b):
+    if a == 0:
+        return pSum[b]
+    else:
+        return pSum[b] - pSum[a-1]
+    
+list_2 = [2,8,3,9,6,5,4]
+prefix_sum = [None]*len(list_2)
+prefix_sum[0] = list_2[0] # type: ignore
+for i in range(1,len(list_2)):
+    prefix_sum[i] = prefix_sum[i-1] + list_2[i] # type: ignore
+print("Prefix Sum (Efficient): ",get_sum(prefix_sum,2,6))
+print()
+
+"""
+Important Problem Statement: Find Equilibrium point.
+    - Equilibrium Statement : A point is called an equilibrium point if the sum of the left side of the point is equal to the right side of the point in the array.
+
+I/P : arr = [3,4,8,-9,20,6]
+O/P : True
+"""
+def equilibrium_point_1(l):
+    n = len(l)
+    for i in range(n):
+        ls,rs = 0,0
+        for j in range(i):
+            ls+=l[j]
+        for k in range(i+1,n):
+            rs+=l[k]
+        if ls == rs:
+            return True
+    return False
+print("Equilibrium point (Naive) O(n^2): ",equilibrium_point_1([3,4,8,-9,9,7]))
+
+def equilibrium_point_2(l):
+    rs = sum(l)
+    ls = 0
+    for i in range(len(l)):
+        rs -= l[i]
+        if ls == rs:
+            return True
+        ls += l[i]
+    return False
+
+print("Equilibrium point (Efficient): ",equilibrium_point_2([3,4,8,-9,9,7]))
+print()
+
+"""
+Problem Statement: Maximum appearing element in ranges
+I/P: left = [1,2,5,15], right = [5,8,7,18]
+O/P: 5
+"""
+def max_appearing_element_1(left,right):
+    freq = [0]*100
+    for i in range(len(left)):
+        for j in range(left[i],right[i]+1):
+            freq[j] += 1
+    return freq.index(max(freq))
+print("Maximum appearing element in ranges (naive): ",max_appearing_element_1([1,2,4],[4,5,7]))
+
+def max_appearing_element_2(left,right):
+    freq = [0] * 101
+    for i in range(len(left)):
+        freq[left[i]]+=1
+        freq[right[i]+1] -=1
+    for i in range(1,100):
+        freq[i] = freq[i] + freq[i-1]
+    return freq.index(max(freq))
+print("Maximum appearing element in ranges(efficient): ",max_appearing_element_2([1,2,4],[4,5,7]))
