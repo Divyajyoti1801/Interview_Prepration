@@ -92,3 +92,95 @@ def two_pointer_approach(arr,x):
             j -= 1
     return False
 print("Two pointer approach to find a pair whose sum: ",two_pointer_approach([2,5,8,12,30],17))
+print()
+
+"""
+Triplet in sorted array 
+"""
+def isPair(arr,x,si):
+    i = si
+    j = len(arr) - 1
+    while i<j:
+        if arr[i] + arr[j] == x:
+            return True
+        elif arr[i] + arr[j] < x:
+            i+=1
+        else:
+            j-=1
+    return False
+
+def triplet_in_sorted(arr,x):
+    for i in range(len(arr)-2):
+        if isPair(arr,x-arr[i],i+1):
+            return True
+    return False
+print("Triplet in a sorted array: ",triplet_in_sorted([2,5,10,15,18],33))
+print()
+
+"""
+Median of two sorted array
+"""
+def median_of_two_sorted(arr1,arr2):
+    n1,n2 = len(arr1),len(arr2)
+    b1,e1 = 0,n1
+    while(b1 <= e1):
+        x = (b1+e1) // 2
+        y = ((n1+n2+1)//2 - x)
+        mnr1 = float("inf") if x == n1 else arr1[x]
+        mxl1 = float("-inf") if x == 0 else arr1[x-1]
+        mnr2 = arr2[y]
+        mxl2 = arr2[y-1]
+        if mxl1 < mnr2 and mxl2 <= mnr1:
+            if (n1+n2) % 2 == 0:
+                return (max(mxl1,mxl2) + min(mnr1,mnr2))/2
+            else:
+                return max(mxl1,mxl2)
+        elif mxl1>mxl2:
+            e1 = x - 1
+        else:
+            b1 = x + 1
+print("Median of two sorted arrays: ", median_of_two_sorted([18,20,30],[5,15,25,35,45]))
+print()
+
+"""
+Find Repeating element
+"""
+def repeating_element(arr):
+    n = len(arr)
+    visit = [False] * n
+    for i in range(n):
+        if(visit[arr[i]]):
+            return arr[i]
+        visit[arr[i]] = True
+    return -1
+print("The Repeating element: ",repeating_element([0,1,2,2,2,3]))
+print()
+
+"""
+Very Important Question: Allocate Minimum Pages 
+"""
+def isFeasible(arr,k,ans):
+    req,s = 1,0
+    for i in range(len(arr)):
+        if (s + arr[i])>ans:
+            req+=1
+            s = arr[i]
+        else:
+            s += arr[i]
+    return req<=k
+
+def allocate_minimum_page(arr,k):
+    n = len(arr)
+    s = sum(arr)
+    mx = max(arr)
+    low,high = mx,s
+    res = 0
+    while low<=high:
+        mid = (low + high) // 2
+        if isFeasible(arr,k,mid):
+            res = mid
+            high = mid - 1
+        else:
+            low = mid + 1
+    return res
+print("Allocate minimum pages:  ",allocate_minimum_page([10,5,20],2))
