@@ -391,7 +391,7 @@ Partition Algorithm: LOMUTO PARTITION
 """
 def lomuto_partition(arr,l,h):
     pivot = arr[h]
-    i = l-1
+    i = l
     for j in range(l,h):
         if arr[j]<pivot:
             i+=1
