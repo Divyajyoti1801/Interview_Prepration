@@ -129,6 +129,7 @@ def sort_two_type_1(arr):
     return arr
 
 print("Sort an Array of two types (+/-): ",sort_two_type_1([13,-12,18,-10]))
+#Using Concept of Hoare's Partition
 def sort_two_type_2(arr):
     i,j = -1,len(arr)
     while True:
@@ -144,3 +145,131 @@ def sort_two_type_2(arr):
 
 list_1 = [13,-12,18,-10]
 print("Sort an Array of two types (+/-) Efficient: ",sort_two_type_2(list_1))
+
+"""
+Problem Statement: Sort an Array with Three types
+    - Sort an Array of 0's, 1's and 2's
+    - Three way Partitioning
+    - Partition around a range
+"""
+def three_way_partition_1(arr):
+    n = len(arr)
+    i=0
+    temp = [0]*n
+    for j in range(0,n):
+        if arr[j]==0:
+            temp[i] = arr[j]
+            i+=1
+    
+    for j in range(0,n):
+        if arr[j]==1:
+            temp[i] = arr[j]
+            i+=1
+    
+    for j in range(0,n):
+        if arr[j] == 2:
+            temp[i] = arr[j]
+            i+=1
+    
+    arr[:] = temp
+    return arr
+print("Three way partition (Naive): ",three_way_partition_1([0,1,0,2,1,2]))
+# Efficient Method: Dutch National Flag Algorithm
+def dutch_national_flag(arr):
+    low,mid,high = 0,0,len(arr)-1
+    while mid<=high:
+        if arr[mid] == 0:
+            arr[low],arr[mid] = arr[mid],arr[low]
+            low+=1
+            mid+=1
+        elif arr[mid]==1:
+            mid+=1
+        else:
+            arr[high],arr[mid] = arr[mid],arr[high]
+            high -=1
+list_2 = [0,1,2,1,1,2]
+dutch_national_flag(list_2)
+print("Dutch National Flag Algorithm: ",list_2)
+print()
+
+"""
+Problem Statement: Merge Overlapping Intervals
+I/P: [[1,3],[2,4],[5,7],[6,8]]
+O/P: [[1,4],[5,8]] 
+"""
+def over_lapping_1(arr):
+    arr.sort(key = lambda x:x[0])
+    res = 0
+    for i in range(1,len(arr)):
+        if arr[res][1]>=arr[i][0]:
+            arr[res][1] = max(arr[res][1],arr[i][1])
+        else:
+            res += 1
+            arr[res] = arr[i]
+    for i in range(res+1):
+        print(arr[i],end = " ")
+    print()
+print("Over-Lapping Intervals (Efficient) [[1,3],[2,4],[5,7],[6,8]] : ")
+over_lapping_1([[1,3],[2,4],[5,7],[6,8]])
+print()
+
+"""
+Problem Statement: Meeting the maximum guests
+I/P: arr[]=[900,940], dep[]  = [1000,1030]
+O/P: 2
+"""
+def meet_maximum_guests(arr,dep):
+    arr.sort()
+    dep.sort()
+    n = len(arr)
+    i,j = 1,0
+    curr,res = 1,1
+    while(i<n and j<n):
+        if arr[i] <= dep[j]:
+            curr+=1
+            i+=1
+        else:
+            curr-=1
+            j+=1
+        res = max(res,curr)
+    return res
+list_3 = [900,600,700]
+dep = [1000,800,730]
+print("Meeting the maximum guests: ",meet_maximum_guests(list_3,dep))
+print()
+"""
+Advance Sorting Algorithm: Counting Sort
+    - Time Complexity: O(n+k) if k <= linear;
+    - Auxiliary Space: O(n+k)
+    - Stable Algorithm
+    - Used as subroutine for Radix Sort
+"""
+def counting_sort_naive(arr,k):
+    count = [0]*k
+
+    for x in arr:
+        count[x]+=1
+    idx = 0
+    for i in range(k):
+        for j in range(count[i]):
+            arr[idx] = i
+            idx+=1
+# There is a problem: Would not work for an array of objects like an array of students to be sorted
+
+def counting_sort(arr,k):
+    output = [0] * len(arr)
+    count = [0] * (k)
+    for x in arr:
+        count[x] +=1
+    for i in range(1,k):
+        count[i] += count[i-1]
+    for x in reversed(arr):
+        output[count[x]-1]=x
+        count[x]-=1
+    arr[:] = output
+    return arr
+print("Counting Sort: ",counting_sort([1,4,4,1,0,1],5))
+
+"""
+Advance Sorting Algorithm: Cycle Sort
+"""
