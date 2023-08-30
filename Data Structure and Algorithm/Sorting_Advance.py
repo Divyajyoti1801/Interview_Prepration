@@ -269,7 +269,95 @@ def counting_sort(arr,k):
     arr[:] = output
     return arr
 print("Counting Sort: ",counting_sort([1,4,4,1,0,1],5))
-
+print()
 """
 Advance Sorting Algorithm: Cycle Sort
+    - Worst case time complexity: O(n^2)
+    - Does minimum memory writes and can be useful for cases where memory write are costly
+    - In-Place and Not-Stable
+    - Useful to solve questions like find minimum swaps required to sorts an array
 """
+def cycle_sort_distinct(arr):
+    for cs in range(len(arr)-1):
+        item = arr[cs]
+        pos  =  cs
+        for i in range(cs+1,len(arr)):
+            if arr[i]<item:
+                pos += 1
+        if pos == cs:
+            continue
+
+        arr[pos],item = item,arr[pos]
+        while pos!=cs:
+            pos = cs
+            for i in range(cs+1,len(arr)):
+                if arr[i] < item:
+                    pos = pos + 1
+            if pos == cs:
+                continue
+            arr[pos],item = item,arr[pos]
+cycle_sort_distinct(list_3)
+print("Cycle Sort: ",list_3)
+print()
+
+"""
+Advance Sorting Algorithm: Radix Sort 
+    - Algorithm:
+        = Re-Writing number with leading zeroes
+        = Stable Sort according the last digit (Least Significant Digit)
+        = Stable Sort according to middle digit
+        = Stable Sort according the most significant digit
+    - Time Complexity: O(d * (n + b))
+"""
+def radix_sort(arr):
+    mx = max(arr)
+    exp = 1
+    while mx/exp > 1:
+        counting_sort_radix(arr,exp)
+        exp *= 10
+
+def counting_sort_radix(arr,exp):
+    output = [0] * len(arr)
+    count = [0] * 10
+    for i in range(0,len(arr)):
+        index = (arr[i]//exp)%10
+        count[index] += 1
+    for i in range(1,10):
+        count[i] += count[i-1]
+    i = len(arr) - 1
+    while i >= 0:
+        index = (arr[i]//exp) % 10
+        output[count[index]-1] = arr[i]
+        count[index] -= 1
+        i -= 1
+    for i in range(0,len(arr)):
+        arr[i] = output[i]
+
+list_4 = [319,212,6,8,100,50]
+radix_sort(list_4)
+print("Radix Sort: ",list_4)
+print()
+
+"""
+Advance Sorting Algorithm: Bucket Sort 
+    - Consider a situation where we have numbers uniformly distributed in range from 1 to 10^8 how do we sort efficiently
+    - Consider another situation where we have floating point number uniformly distributed from range 0.0 to 1.0
+    - Bucket sort performs really poor if data is not uniformly distributed O(n log(n))
+    - In uniformly distributed element, Time Complexity : O(n)(Best Case)
+"""
+def bucket_sort(arr,k):
+    res = max(arr)+1
+    bkt = [[] for i in range(k)]
+    for x in arr:
+        i = (k * x)//res
+        bkt[i].append(x)
+    for i in range(k):
+        bkt[i].sort()
+    idx = 0
+    for i in range(k):
+        for j in range(len(bkt[i])):
+            arr[idx] = bkt[i][j]
+            idx += 1
+list_5 = [30,40,10,8,5,12,70]
+bucket_sort(list_5,4)
+print("Bucket Sort:",list_5)
