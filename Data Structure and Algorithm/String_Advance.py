@@ -98,7 +98,23 @@ KMP Algorithm : Pre-Processing Algorithm
             = If len = 0; lps[i] = 0
             = Else len = lps[len-1]; we now compare str[i] and str[len]
 """
-def longest_proper_suffix(S):
+def longest_proper_prefix_suffix_naive(S,n):
+    for l in range(n-1,-1,-1):
+        for j in range(l):
+            if S[j]!= S[n-l+j]:
+                break
+            else:
+                return l
+
+    return 0
+
+def fill_LPS_Array(S,lps=[]):
+    lps[0]=0
+    for i in range(1,len(S)):
+        lps[i] = longest_proper_prefix_suffix_naive(S,i+1)
+
+
+def longest_proper_prefix_suffix(S):
     lps =[0]*len(S)
     i = 1
     l = 0
@@ -118,4 +134,58 @@ def longest_proper_suffix(S):
         return len(S)//2
     else:
         return res
-print("Firs step of KPM Algo Longest Proper Suffix O(n): ",longest_proper_suffix("abcab"))
+print("Firs step of KPM Algo Longest Proper Prefix Suffix O(n): ",longest_proper_prefix_suffix("abcab"))
+print()
+"""
+Part 2: KMP Algorithm
+    - Time Complexity: O(n)
+    - It use longest Proper Prefix Suffix Algorithm
+    - The naive algorithm works really efficiently when the string characters are distinct.
+"""
+
+"""
+Problem Statement : Anagram Search
+I/P: txt = "geeksforgeeks" pat = "frog"
+O/P: Yes
+"""
+CHAR = 256
+def is_present(txt,pattern):
+    n = len(txt)
+    m = len(pattern)
+    for i in range(n-m+1):
+        if anagram_search_1(txt,pattern,i):
+            return True
+    return False
+def anagram_search_1(txt,pat,i):
+    count = [0] * CHAR
+    for j in range(len(pat)):
+        count[ord(pat[j])]+=1
+        count[ord(txt[i+j])]-=1
+    for j in range(CHAR):
+        if count[j]!=0:
+            return False
+    return True
+print("Is Anagram string present in the given string (Naive): ",is_present("geeksforgeeks","frog"))
+"""
+Efficient Approach: Using sliding window technique
+"""
+def are_same(ct,cp):
+    for i in range(CHAR):
+        if ct[i] != cp[i]:
+            return False
+    return True
+
+def isPresent(text,pattern):
+    n = len(text)
+    m = len(pattern)
+    ct = [0]*CHAR
+    cp = [0]*CHAR
+    for i in range(m):
+        ct[ord(text[i])]+=1
+        cp[ord(pattern[i])]+=1
+    for i in range(m,n):
+        if are_same(ct,cp):
+            return True
+        ct[ord(text[i])]+=1
+        ct[ord(text[i-m])]-=1
+    return False
