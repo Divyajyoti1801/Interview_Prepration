@@ -189,3 +189,74 @@ def isPresent(text,pattern):
         ct[ord(text[i])]+=1
         ct[ord(text[i-m])]-=1
     return False
+print("Is Anagram chain of string present in the given string (Effective): ",isPresent("geeksforgeeks","frog"))
+print()
+"""
+Problem Statement: Lexicographic Rank  
+"""
+def factorial(n):
+    if n == 0:
+        return 1
+    return n*factorial(n-1)
+def lexicographic_rank(S):
+    res = 1
+    n = len(S)
+    mul = factorial(n)
+    count =[0]*CHAR
+    for i in range(n):
+        count[ord(S[i])]+=1
+    for i in range(1,CHAR):
+        count[i]+=count[i-1]
+    for i in range(n-1):
+        mul = mul//(n-i)
+        res += count[ord(S[i])-1] * mul
+        for j in range(ord(S[i]),CHAR):
+            count[j]-=1
+    return res
+print("Lexicographical Rank of a string: ",lexicographic_rank("STRING"))
+print()
+
+"""
+Problem Statement: Longest Substring with Distinct Characters
+"""
+def Are_Distinct(str,i,j):
+    visited = [0]*CHAR
+    for k in range(i,j+1):
+        if visited[ord(str[k])] == True:
+            return False
+        visited[ord(str[k])] = True
+    return True
+def longest_substring_distinct_characters_1(S):
+    n = len(S)
+    res = 0
+    for i in range(n):
+        for j in range(i,n):
+            if Are_Distinct(S,i,j):
+                res = max(res,j-i+1)
+    return res
+print("Longest Substring with distinct characters (Method-1): ",longest_substring_distinct_characters_1("abcdabc"))
+def longest_substring_distinct_characters_2(S):
+    n = len(S)
+    res = 0
+    for i in range(n):
+        visited = [0] * 256
+        for j in range(i,n):
+            if visited[ord(S[j])] == True:
+                break
+            else:
+                res = max(res,j-i+1)
+                visited[ord(S[j])] = True
+    return res
+print("Longest Substring with distinct characters (Method-2): ",longest_substring_distinct_characters_2("abcdabc"))
+def longest_substring_distinct_characters_3(S):
+    n = len(S)
+    res = 0
+    prev = [-1] * 256
+    i = 0
+    for j in range(n):
+        i = max(i,prev[ord(S[j])]+1)
+        max_end = j-i+1
+        res = max(res,max_end)
+        prev[ord(S[j])] = j
+    return res
+print("Longest Substring with distinct characters (Method-3): ",longest_substring_distinct_characters_3("abcdabc"))
