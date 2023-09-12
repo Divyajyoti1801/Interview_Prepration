@@ -112,10 +112,15 @@ print()
 
 """
 Problem Statement: Detect and remove the loop in the linked list
+    Solution Algorithm: 
+        - Detect loop using Floyd's detection algorithm
+        - Move "slow_p" to the beginning of linked list and keep "fast_p" at the meeting point
+        - Now one by one move slow and fast (at same speed). The point where they meet now in the 
 """
 def detect_and_remove_loop(head):
     slow = head
     fast = head
+    # Detect the loop
     while fast!=None and fast.link!=None:
         slow = slow.link
         fast = fast.link.link
@@ -124,6 +129,7 @@ def detect_and_remove_loop(head):
     
     if slow!=fast:
         return head
+    # Removing the loop
     slow = head
     while slow.link!=fast.link:
         slow = slow.link
@@ -134,3 +140,129 @@ print("Detect and Remove the loop from the linked list: ")
 cycle_head=detect_and_remove_loop(cycle_head)
 printList(cycle_head)
 print()
+
+"""
+Problem Statement: Intersection point of two linked list
+    - Time Complexity: O(n+m)
+    - Space Complexity: O(n)
+"""
+def get_intersection_of_two_linked_list_1(head1,head2):
+    s = set()
+    curr = head1
+    while curr!=None:
+        s.add(curr.data)
+        curr = curr.link
+    curr = head2
+    while curr!=None:
+        if curr.data in s:
+            return curr.data
+        curr = curr.link
+    return -1
+# Input linked list 1
+head_1 = Node(10)
+head_1.link = Node(20) # type: ignore
+head_1.link.link = Node(30) # type: ignore
+head_1.link.link.link = Node(40) # type: ignore
+print("List-1: ")
+printList(head_1)
+# Input linked list 2
+head_2 = Node(50)
+head_2.link = Node(30) # type: ignore
+head_2.link.link = Node(80) # type: ignore
+head_2.link.link.link = Node(100) # type: ignore
+print("List-2: ")
+printList(head_2)
+print("Intersection point of two linked list(Hashing Method): ",get_intersection_of_two_linked_list_1(head_1,head_2))
+def get_size(head):
+    if head is None:
+        return 0
+    count = 0
+    while head!=None:
+        count+=1
+        head = head.link
+    return count
+def get_intersection_of_two_linked_list_2(d,head1,head2):
+    curr1 = head1
+    curr2 = head2
+    for i in range(d):
+        if curr1 == None:
+            return -1
+        curr1 = curr1.link
+    while curr1!=None and curr2!=None:
+        if curr1.data == curr2.data:
+            return curr1.data
+        curr1 = curr1.link
+        curr2 = curr2.link
+    return -1
+print("Intersection of two linked list (Iterative) : ",get_intersection_of_two_linked_list_2(abs(get_size(head_1)-get_size(head_2)),head_1,head_2))
+print()
+
+"""
+Problem Statement : Segregate Even and Odd Nodes
+    - Naive Solution:
+        - Find the last Node reference / pointer by doing a traversal
+        - Traverse the linked list again. For every node, insert it after the last node and make the newly inserted node as the new last node.
+"""
+def segregate_even_and_odd(head):
+    even_start,even_end,odd_start,odd_end = None,None,None,None
+    curr = head
+    while curr!=None:
+        x = curr.data
+        if x%2 == 0:
+            if even_start == None:
+                even_start = curr
+                even_end = even_start
+            else:
+                even_end.link = curr
+                even_end = even_end.link
+        else:
+            if odd_start == None:
+                odd_start = curr
+                odd_end = odd_start
+            else:
+                if odd_start == None:
+                    odd_start = curr
+                    odd_end = odd_start
+                else:
+                    odd_end.link = curr
+                    odd_end = odd_end.link
+        curr = curr.link
+    
+    if odd_start == None or even_start == None:
+        return head
+    even_end = odd_start
+    odd_start = None
+    return even_start
+print("Segregate Even and Odd Node: ")
+res_head = segregate_even_and_odd(head_1)
+printList(res_head)
+
+"""
+Problem Statement: Pairwise swap Nodes
+"""
+def pairwise_swap_node_1(head):
+    curr = head
+    while curr != None and curr.link!=None:
+        curr.data,curr.link.data = curr.link.data,curr.data
+        curr = curr.link.link
+    return head
+print("Pair wise swapping Nodes (Swapping Data): ")
+res_head = pairwise_swap_node_1(head_1)
+printList(res_head)
+def pairwise_swap_node_2(head):
+    if head == None or head.link == None:
+        return head
+    curr = head.link.link
+    prev = head
+    head = head.link
+    while curr!=None and curr.link!=None:
+        prev.link = curr.link
+        prev = curr
+        nex = curr.link.link
+        curr.link.link = curr
+        curr = nex
+    prev.link = curr
+    return head
+print("Pair wise swapping Node (Changing/pointers references): ")
+res_head = pairwise_swap_node_2(head_1)
+printList(res_head)
