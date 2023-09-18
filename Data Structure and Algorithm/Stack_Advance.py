@@ -55,7 +55,7 @@ class TwoStacks:
     
     def size_2(self):
         return self.size - self.top2
-print("Concept of Two Stacks in an Array: ")
+print("Concept of Two Stacks in an Array")
 two_stacks = TwoStacks(5)
 two_stacks.push_1(10)
 two_stacks.push_2(20)
@@ -182,6 +182,7 @@ def next_greater_element_2(arr):
         st.append(arr[i])
     return res
 print("Next greater element (Efficient) O(n): ",next_greater_element_2([5,15,10,8,6,12,7]))
+print()
 
 """
 Problem Statement: Largest Rectangular area in a histogram
@@ -233,3 +234,264 @@ def largest_rectangular_area_histogram_2(arr):
         res = max(res,curr_width*arr[tp])
     return res
 print("Largest area of rectangular histogram (Efficient): ",largest_rectangular_area_histogram_2([6,2,5,4,1,5,6]))
+print()
+"""
+Problem Statement: Largest rectangle with all 1's
+    Naive Solution:
+        - Consider every cell as a straight point
+        - Consider all sizes of rectangles with current cell as a straight point
+        - For the current rectangle, check if it has all 1's. If yes,then update the res if the current size is more.
+        - Time Complexity: O(R^3 * C^3)
+    
+    Efficient Solution:
+        - Run a loop from 0 to R-1
+            = Update the histogram for the current row
+            = Find the largest area in the histogram and update the result if required
+"""
+def largest_rectangle_with_all_1s(arr):
+    res = largest_rectangular_area_histogram_2(arr[0])
+    for i in range(1,len(arr)):
+        for j in range(len(arr[i])):
+            if arr[i][j]:
+                arr[i][j]+=arr[i-1][j]
+        res = max(res,largest_rectangular_area_histogram_2(arr[i]))
+    return res
+print("Largest rectangle with all 1s O(R*C): ",largest_rectangle_with_all_1s([[1,0,0,1,1],[0,0,0,1,1],[1,1,1,1,1]])) 
+print()
+
+"""
+Problem Statement: Design a stack that support normal stack operations in O(1) and also supports getMin() in O(1)
+"""
+class Node:
+    def __init__(self,value):
+        self.value = value
+        self.next = None
+    
+    def __str__(self):
+        return "Node({})".format(self.value)
+    __repr__ = __str__
+
+class Stack:
+    def __init__(self):
+        self.top = None
+        self.count = 0
+        self.minimum = None
+    
+    def __str__(self):
+        temp = self.top
+        out = []
+        while temp:
+            out.append(str(temp.value))
+            temp = temp.next
+        out = "\n".join(out)
+        return ("Top {} \n\nStack : \n".format(self.top,out))
+    
+    __repr__=__str__
+
+    def getMin(self):
+        if self.top is None:
+            return "Stack is Empty"
+        else:
+            print("Minimum Element in the stack is: {}".format(self.minimum))
+    
+    def isEmpty(self):
+        if self.top == None:
+            return True
+        else:
+            return False
+    
+    def __len__(self):
+        self.count = 0
+        tempNode = self.top
+        while tempNode:
+            tempNode = tempNode.next
+            self.count+=1
+        return self.count
+    
+    def peek(self):
+        if self.top is None:
+            print("Stack is Empty")
+        else:
+            if self.top.value < self.minimum:
+                print("Top Most element is: {}".format(self.minimum))
+            else:
+                print("Top Most element is: {}".format(self.top.value))
+    
+    def push(self,value):
+        if self.top is None:
+            self.top = Node(value)
+            self.minimum = value
+        elif value < self.minimum:
+            temp = (2 * value) - self.minimum
+            new_node = Node(temp)
+            new_node.next = self.top #type:ignore
+            self.top = new_node
+            self.minimum = value
+        else:
+            new_node = Node(value)
+            new_node.next = self.top # type: ignore
+            self.top = new_node
+        print("Number Inserted: {}".format(value))
+    
+    def pop(self):
+        if self.top is None:
+            print("Stack is Empty")
+        else:
+            removedNode = self.top.value
+            self.top = self.top.next
+            if removedNode < self.minimum:
+                print("Top most element removed: {}".format(self.minimum))
+                self.minimum = ((2*self.minimum)- removedNode) # type: ignore
+            else:
+                print("Top most element removed: {}".format(removedNode))
+print("A Stack that support normal stack operations in O(1) and also supports getMin() in O(1): ")
+s = Stack()
+s.push(3)
+s.push(5)
+s.getMin()
+s.push(2)
+s.push(1)
+s.getMin()
+s.pop()
+s.getMin()
+s.pop()
+s.peek()
+print()
+
+"""
+Infix, Postfix and Prefix Introduction
+    - Infix : x + y
+    - Postfix : xy+
+    - Prefix : +xy
+
+Advantages of Prefix and Postfix:
+    - Do not require parenthesis, precedence rules and associativity rules
+    - Can be evaluated by writing a program that traverse the given expression exactly one.
+"""
+class Conversion:
+    def __init__(self,capacity):
+        self.top = -1
+        self.capacity = capacity
+        self.array = []
+        self.output = []
+        self.precedence = {"+":1,"-":1,"*":2,"/":2,"^":3}
+    
+    def isEmpty(self):
+        return True if self.top == -1 else False
+    
+    def peek(self):
+        return self.array[-1]
+    
+    def pop(self):
+        if not self.isEmpty():
+            self.top -= 1
+            return self.array.pop()
+        else:
+            return "$"
+    
+    def push(self,op):
+        self.top += 1
+        self.array.append(op)
+    
+    def isOperand(self,ch):
+        return ch.isalpha()
+    
+    def notGreater(self,i):
+        try:
+            a = self.precedence[i]
+            b = self.precedence[self.peek()]
+            return True if a<=b else False
+        except KeyError:
+            return False
+    
+    def infixToPostfix(self,exp):
+        for i in exp:
+            if self.isOperand(i):
+                self.output.append(i)
+            elif i == "(":
+                self.push(i)
+            elif i == ")":
+                while((not self.isEmpty())) and self.peek()!="(":
+                    a = self.pop()
+                    self.output.append(a)
+                if (not self.isEmpty() and self.peek()!="("):
+                    return -1
+                else:
+                    self.pop()
+            else:
+                while(not self.isEmpty() and self.notGreater(i)):
+                    self.output.append(self.pop())
+                self.push(i)
+        
+        while not self.isEmpty():
+            self.output.append(self.pop())
+        
+        print("".join(self.output))
+
+print("Infix to Postfix Conversion (Efficient Method): ")
+exp_1 = "a+b*(c^d-e)^(f+g*h)-i"
+ob_1 = Conversion(len(exp_1))
+ob_1.infixToPostfix(exp_1)
+print()
+"""
+Efficient Algorithm to convert Infix To Postfix
+    - Create an empty stack, st
+    - Do following for every character x from left to right
+    - if x is :
+        = Operand : output it
+        = Left Parenthesis : Push to st
+        = Right Parenthesis: Pop from st until left parenthesis is found. Output the popped operator.
+        = Operator : if st is empty, push x to st; else compare with st top
+            - Higher precedence (than st top), push to st
+            - Lower precedence, pop st top and output until a higher precedence operator is found. Then push s to st
+            - Equal precedence, use associativity
+    - P op and output everything from st
+"""
+
+"""
+Problem Statement: Evaluation of postfix
+    - Create an empty stack st.
+    - Traverse through every symbol x of given postfix
+        = If x in an operand, push to st
+        = Else (x is an operator)
+            - op1 = st.pop()
+            - op2 = st.pop()
+            - compute op2 x op1 and push the result to st
+            - return s.top()
+"""
+class Evaluate:
+    def __init__(self,capacity):
+        self.top = -1
+        self.capacity = capacity
+        self.array = []
+    
+    def isEmpty(self):
+        return True if self.top == -1 else False
+    
+    def peek(self):
+        return self.array[-1]
+    
+    def pop(self):
+        if not self.isEmpty():
+            self.top -= 1
+            return self.array.pop()
+        else:
+            return "$"
+    
+    def push(self,op):
+        self.top+=1
+        self.array.append(op)
+    
+    def evaluatePostfix(self,exp):
+        for i in exp:
+            if i.isdigit():
+                self.push(i)
+            else:
+                val1 = self.pop()
+                val2 = self.pop()
+                self.push (str(eval(val2 + i + val1)))
+        return int(self.pop())
+exp_2 = "231*+9-"
+obj_2 = Evaluate(len(exp_2))
+print("Evaluation of Postfix expression: ",obj_2.evaluatePostfix(exp_2))
+print()
