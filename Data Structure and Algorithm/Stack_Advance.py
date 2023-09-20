@@ -495,3 +495,112 @@ exp_2 = "231*+9-"
 obj_2 = Evaluate(len(exp_2))
 print("Evaluation of Postfix expression: ",obj_2.evaluatePostfix(exp_2))
 print()
+
+"""
+Problem Statement: Infix to Prefix using stack.
+    Algorithm :
+        - Create an Empty stack, st
+        - Create an Empty string, prefix
+        - Do following for every character c from right to left.
+        - If C is:
+            = Operand : Push it to prefix
+            = Right Parenthesis : Push to st
+            = Left Parenthesis : Pop from st until right parenthesis is found. Append the popped character to prefix.
+        - Operator: if st is empty, push c to st else, compare with st top.
+            = Higher Precedence(than st top) : push C to st.
+            = Lower Precedence : Pop st top and append the popped item to prefix until a higher precedence operator is found (on st becomes empty). Push c to st.
+            = Equal Precedence : Use associativity
+        - Pop everything : 
+"""
+def isOperator(c):
+    return (not(c>='a' and c<='z') and not(c>='0' and c<='9') and not(c>='A' and c<= 'Z'))
+
+def getPriority(C):
+    if C == '-' or C == "+":
+        return 1
+    elif C == "*" or C == "/":
+        return 2
+    elif C == "^":
+        return 3
+    return 0
+
+def infixToPrefix(infix):
+    operators = []
+    operands = []
+
+    for i in range(len(infix)):
+        if infix[i] == "(":
+            operators.append(infix[i])
+        elif infix[i] == ")":
+            while len(operators)!=0 and operators[-1]!= "(":
+                op1 = operands[-1]
+                operands.pop()
+
+                op2 = operands[-1]
+                operands.pop()
+
+                op = operators[-1]
+                operators.pop()
+                
+                tmp = op + op2 + op1
+                operands.append(tmp)
+            operators.pop()
+        
+        elif (not isOperator(infix[i])):
+            operands.append(infix[i] + "")
+        
+        else:
+            while len(operators)!=0 and getPriority(infix[i])<=getPriority(operators[-1]):
+                op1 = operands[-1]
+                operands.pop()
+                
+                op2 = operands[-1]
+                operands.pop()
+                
+                op = operators[-1]
+                operators.pop()
+                
+                tmp = op + op2 + op1
+                operands.append(tmp)
+            operators.append(infix[i])
+    
+    while len(operators)!=0:
+        op1 = operands[-1]
+        operands.pop()
+
+        op2 = operands[-1]
+        operands.pop()    
+        
+        op = operands[-1]
+        operators.pop()
+        
+        tmp = op + op2 + op1
+        operands.append(tmp)
+
+    return operands[-1]
+# print("Infix to Prefix (S): ",infixToPrefix("(A-B/C)*(A/K-L)"))
+
+"""
+Problem Statement: Evaluation of prefix
+"""
+def is_operand(c):
+    return c.isdigit()
+
+def evaluate_prefix(expression):
+    stack = []
+    for c in expression[::-1]:
+        if is_operand(c):
+            stack.append(int(c))
+        else:
+            o1 = stack.pop()
+            o2 = stack.pop()
+            if c == "+":
+                stack.append(o1 + o2)
+            elif c == "-":
+                stack.append(o1-o2)
+            elif c == "*":
+                stack.append(o1*o2)
+            elif c == "/":
+                stack.append(o1/o2)
+    return stack.pop()
+print("Evaluation of Prefix Expression: ",evaluate_prefix("+9*26"))
