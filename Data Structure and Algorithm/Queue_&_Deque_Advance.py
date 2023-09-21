@@ -124,3 +124,146 @@ print("Top of the Stack: ",stack_1.top())
 stack_1.pop()
 print("Now top of the Stack: ",stack_1.top())
 print()
+
+"""
+Problem Statement: Reverse a Queue
+    Iterative Solution: 
+        - Create an empty stack
+        - Move all items of q to stack
+        - Move all items back to the q
+"""
+def reverse_of_queue_itr(q = deque()):
+    st = []
+    while q:
+        st.append(q.popleft())
+    while st:
+        q.append(st.pop())
+    return q
+queue_2 = deque()
+queue_2.append(20) 
+queue_2.append(30) 
+queue_2.append(10) 
+print("Reverse of the queue (Iterative): ",reverse_of_queue_itr(queue_2))
+def reverse_of_queue_recur(q = deque()):
+    if len(q) == 0:
+        return
+    x = q.popleft()
+    reverse_of_queue_recur(q)
+    q.append(x)
+    return q
+print("Reverse of the queue (Recursion): ",reverse_of_queue_recur(queue_2))
+print()
+
+"""
+Problem Statement: Generate first n numbers with given digits.
+
+    Naive Solution:
+        - Traverse through all natural numbers while we have not generate the numbers
+        - For every traversed number, check if it has 5 and 6 only. if yes, print the number and increment the count.
+    
+    Efficient Solution:
+        - Create an empty queue, q
+        - Add 5 and 6 to q
+        - Run a loop n times
+            = Take out an item from q
+            = Print the item
+            = Append 5 to the item and add the new number to q
+            = Append 6 to the items and add the new number to q
+"""
+def generate_first_n_numbers(n):
+    q = deque()
+    q.append("5")
+    q.append("6")
+    for i in range(n):
+        curr = q.popleft()
+        print(curr,end= " ")
+        q.append(curr + "5")
+        q.append(curr + "6")
+    print()
+print("Generate first n numbers with the given digits: ")
+generate_first_n_numbers(3)
+def generate_first_n_numbers_2(n):
+    q = deque()
+    q.append("5")
+    q.append("6")
+    i = 0
+    while (i + len(q)) < n:
+        curr = q.popleft()
+        print(curr,end = " ")
+        q.append(curr+"5")
+        q.append(curr+"6")
+        i+=1
+    while i<n:
+        print(q.popleft(),end=" ")
+        i+=1
+    print()
+print("Generate first n numbers with the given digits (Better Implementation): ")
+generate_first_n_numbers_2(3)
+print()
+
+"""
+Problem Statement: Design a data structure with max/min operations
+"""
+class MaxMinStruct:
+    def __init__(self):
+        self.dq = deque()
+    
+    def insertMin(self,x):
+        self.dq.appendleft(x)
+    
+    def insertMax(self,x):
+        self.dq.append(x)
+    
+    def extractMin(self):
+        return self.dq.popleft()
+    
+    def extractMax(self):
+        return self.dq.pop()
+    
+    def getMin(self):
+        return self.dq[0]
+    
+    def getMax(self):
+        return self.dq[-1]
+print("Design a data structure with max/min operations: ")
+queue_3 = MaxMinStruct()
+queue_3.insertMin(10)
+queue_3.insertMin(5)
+queue_3.insertMax(20)
+queue_3.insertMin(3)
+print(queue_3.extractMin())
+print(queue_3.extractMax())
+print(queue_3.getMin())
+print(queue_3.getMax())
+print()
+
+"""
+Problem Statement: Maximum in all subArrays of size k
+"""
+def max_in_all_subarray_1(arr,k):
+    result = []
+    for i in range(len(arr)-k+1):
+        res = arr[i]
+        for j in range(i+1,i+k):
+            res = max(res,arr[j])
+        result.append(res)
+    return result
+print("Maximum of all subarrays of size k(Naive): ",max_in_all_subarray_1([10,8,5,12,15,7,6],3))
+
+def max_in_all_subarray_2(arr,k):
+    dq = deque()
+    for i in range(k):
+        while dq and arr[i]>=arr[dq[-1]]:
+            dq.pop()
+        dq.append(i)
+    print(arr[dq[0]],end=" ")
+    for i in range(k,len(arr)):
+        while dq and dq[0]<=i-k:
+            dq.popleft()
+        while dq and arr[i] >= arr[dq[-1]]:
+            dq.pop()
+        dq.append(i)
+        print(arr[dq[0]],end=" ")
+    print()
+print("Maximum of all subarrays of size k (Efficient): ")
+max_in_all_subarray_2([20,40,30,35,60],3)
