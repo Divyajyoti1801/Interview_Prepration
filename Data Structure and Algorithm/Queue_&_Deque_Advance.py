@@ -267,3 +267,45 @@ def max_in_all_subarray_2(arr,k):
     print()
 print("Maximum of all subarrays of size k (Efficient): ")
 max_in_all_subarray_2([20,40,30,35,60],3)
+print()
+"""
+Problem Statement: Consider an arrangement where n petrol pumps are arranged in a circular manner. We need to find the first petrol pump from where we can visit all petrol pumps and come back to the petrol pump without ever going out of the petrol.
+I/P: Petrol = [4,8,7,4]
+O/P: distance = [6,5,3,5]
+
+    Better Solution:
+        - keep adding items to the end of deque while curr_petrol is greater than equal to 0
+        - Keep removing items from the front of degree while curr_petrol is negative.
+    
+    Efficient Solution:
+        - if curr_petrol becomes negative at pi, then none of the petrol pumps from p0 to pi can be solution
+            p0, p1, ....pi-1, pi, pi+1,....pn-1
+        - Let pi be the first petrol pump where current petrol becomes negative, then
+            curr_petrol = Sum(i,j=0)(petrol[j] - dist[j])
+"""
+def circular_tour_1(petrol=[],distance=[]):
+    n = len(petrol)
+    for start in range(n):
+        curr_petrol = 0
+        end = start
+        while True:
+            curr_petrol+= (petrol[end]-distance[end])
+            if curr_petrol < 0:
+                break
+            end = (end+1)%n
+            if end == start:
+                return start+1
+    return 1
+print("Circular tour (Naive): ",circular_tour_1([4,8,7,4],[6,5,3,5]))
+def circular_tour_2(petrol=[],distance=[]):
+    start = 0
+    curr_pet = 0
+    prev_pet = 0
+    for i in range(len(petrol)):
+        curr_pet+=(petrol[i]-distance[i])
+        if curr_pet<0:
+            start = i+1
+            prev_pet += curr_pet
+            curr_pet = 0
+    return (start + 1) if((curr_pet+prev_pet)>=0) else -1
+print("Circular tour (Efficient): ",circular_tour_2([4,8,7,4],[6,5,3,5]))
