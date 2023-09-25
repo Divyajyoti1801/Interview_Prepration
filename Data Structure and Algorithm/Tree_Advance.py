@@ -311,18 +311,134 @@ def traverse_linked_list(head):
 print("Conversion of Binary Tree into Doubly Linked list: ")
 traverse_linked_list(binary_tree_to_linked_list(root_5))
 print()
+print()
 
 """
 Problem Statement: Construct Binary Tree from InOrder and PreOrder
 """
-# mp ={}
-# preIndex = 0
-# def build_tree_with_preorder_inorder(preorder,inorder,index_start,index_end):
-#     global preIndex,mp
-#     if index_start > index_end:
-#         return None
-#     curr = preorder[preIndex]
-#     preIndex+=1
-#     temp_node = Node(curr)
-#     temp_node.left = build_tree_with_preorder_inorder(preorder,inorder,index_start,index_end-1)
-#     temp_node.right = build_tree_with_preorder_inorder(preorder,inorder,temp_node+1)
+pre_index = 0
+mp={}
+def build_tree_with_inorder_postorder(inorder,preorder,index_start,index_end):
+    global pre_index,mp
+    if index_start>index_end:
+        return None
+    
+    curr = preorder[pre_index]
+    pre_index +=1
+    temp_node = Node(curr)
+    
+    if index_start == index_end:
+        return temp_node
+    
+    inorder_index = mp[curr]
+
+    temp_node.left = build_tree_with_inorder_postorder(inorder,preorder,index_start,inorder_index-1) # type: ignore
+    temp_node.right = build_tree_with_inorder_postorder(inorder,preorder,inorder_index+1,index_end) # type: ignore
+    return temp_node
+
+def build_tree_wrap(inorder,preorder,length):
+    global mp
+    for i in range(length):
+        mp[inorder[i]] = i
+    return build_tree_with_inorder_postorder(inorder,preorder,0,length-1)
+
+def inorder_traversal(node):
+    if node == None:
+        return
+    inorder_traversal(node.left)
+    print(node.data,end = " ")
+    inorder_traversal(node.right)
+print("Constructing Binary Tree from InOrder and PreOrder arrangement O(n)")
+inOrder_array = ["D","B","E","A","F","C"]
+preOrder_array = ["A","B","D","E","C","F"]
+root = build_tree_wrap(inOrder_array,preOrder_array,len(inOrder_array))
+inorder_traversal(root)
+print()
+print()
+"""
+Problem Statement: Tree Traversal in Spiral Form
+
+    Method 1 (Use a Queue and a Stack)
+        = We use line by line traversal idea. to reverse the alternate levels, we use a stack
+        = Alternate level node are first pushed into a stack then printed
+    
+    Method 2:
+        = Push root to the stack_1
+        = While any of the two stacks is not empty
+            - While stack_1 is not empty
+                = Take out a node, print it
+                = Push children of the taken out node into stack_2
+            - While stack_2 is not empty
+                = Take out a node, print it
+                = Push children of the taken out node into stack_1 order
+"""
+def tree_traversal_in_spiral_form(root):
+    h = height_of_tree(root)
+    ltr = False
+    for i in range(1,h+1):
+        level_traversal(root,i,ltr)
+        ltr = not ltr
+
+def level_traversal(root,level,ltr):
+    if root == None:
+        return
+    if level == 1:
+        print(root.data,end=" ")
+    elif level>1:
+        if ltr:
+            level_traversal(root.left,level-1,ltr)
+            level_traversal(root.right,level-1,ltr)
+        else:
+            level_traversal(root.right,level-1,ltr)
+            level_traversal(root.left,level-1,ltr)
+print("Spiral Order traversal of Binary Tree: ")
+root_6 = Node(1)
+root_6.left = Node(2) # type: ignore
+root_6.right= Node(3) # type: ignore
+root_6.left.left= Node(7) # type: ignore
+root_6.left.right= Node(6) # type: ignore
+root_6.right.left= Node(5) # type: ignore
+root_6.right.right= Node(4) # type: ignore
+tree_traversal_in_spiral_form(root_6)
+print()
+print()
+"""
+Problem Statement: Diameter of a Binary Tree
+"""
+root_7 = Node(1)
+root_7.left = Node(2) # type: ignore
+root_7.right = Node(3) # type: ignore
+root_7.left.left = Node(4) # type: ignore
+root_7.left.right = Node(5) # type: ignore
+
+def diameter_binary_tree_1(root):
+    if root is None:
+        return 0
+    left_height = height_of_tree(root.left)
+    right_height = height_of_tree(root.right)
+    left_diameter = diameter_binary_tree_1(root.left)
+    right_diameter = diameter_binary_tree_1(root.right)
+
+    return max(left_height+right_height+1,max(left_diameter,right_diameter))
+print("Diameter of a Binary Tree 1: ",diameter_binary_tree_1(root_7))
+class Height:
+    def __init__(self):
+        self.h = 0
+
+def diameter_binary_tree_2(root,height):
+    left_height = Height()
+    right_height = Height()
+    if root is None:
+        height.h = 0
+        return 0
+    left_diameter = diameter_binary_tree_2(root.left,left_height)
+    right_diameter = diameter_binary_tree_2(root.right,right_height)
+    
+    height.h = max(left_height.h,right_height.h) + 1
+    return max(left_height.h+right_height.h+1,max(left_diameter,right_diameter))
+
+def diameter_2(root):
+    height = Height()
+    return diameter_binary_tree_2(root,height)
+print("Diameter of a Binary Tree 2: ",diameter_2(root_7))
+print()
