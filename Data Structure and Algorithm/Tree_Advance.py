@@ -404,6 +404,10 @@ print()
 print()
 """
 Problem Statement: Diameter of a Binary Tree
+    Better Solution: O(n) Time use a dictionary
+        - Pre Compute heights of all nodes by calling the recursive height function
+        - Store these heights in a dictionary with node as a key and height as a value.
+        - The Recursive diameter function simply precomputed value
 """
 root_7 = Node(1)
 root_7.left = Node(2) # type: ignore
@@ -442,3 +446,83 @@ def diameter_2(root):
     return diameter_binary_tree_2(root,height)
 print("Diameter of a Binary Tree 2: ",diameter_2(root_7))
 print()
+
+"""
+Problem Statement : Lowest Common Ancestor (LCA)
+
+    Efficient Solution: Require one traversal. We have the following cases for every node.
+        - If it is same as node_1 or node_2
+        - If one of the subtrees contains node_1 and other contains node_2
+        - If one of the subtrees contains both node_1 and node_2
+        - If none of its subtrees contain any of node_1 and node_2
+"""
+def find_path(root,path,x):
+    if root is None:
+        return False
+    path.append(root.data)
+    if root.data == x:
+        return True
+    if (root.left!=None and find_path(root.left,path,x)) or (root.right!=None and find_path(root.right,path,x)):
+        return True
+    path.pop()
+    return False
+
+def lowest_common_ancestor_1(root,node_1,node_2):
+    path_1 = []
+    path_2 = []
+    if not find_path(root,path_1,node_1) or not find_path(root,path_2,node_2):
+        return None
+    i = 0
+    while i<len(path_1) and i<len(path_2):
+        if path_1[i]!=path_2[i]:
+            break
+        i+=1
+    return path_1[i-1]
+root_8 = Node(10)
+root_8.left = Node(20) # type: ignore
+root_8.right = Node(30) # type: ignore
+root_8.right.left = Node(40) # type: ignore
+root_8.right.right = Node(50) # type: ignore
+print("Lowest Common Ancestor 1: ",lowest_common_ancestor_1(root_8,20,50))
+
+def lowest_common_ancestor_2(root,node_1,node_2):
+    if root is None:
+        return None
+    if root.data == node_1 or root.data==node_2:
+        return root
+    lca_1 = lowest_common_ancestor_2(root.left,node_1,node_2)
+    lca_2 = lowest_common_ancestor_2(root.right,node_1,node_2)
+    if lca_1 and lca_2:
+        return root
+    return lca_1 if lca_1 else lca_2
+print("Lowest common ancestor 2: ",lowest_common_ancestor_2(root_8,20,50).data) #type:ignore
+print()
+
+"""
+Problem Statement: Burn a Binary tree from a leaf
+"""
+root_9 = Node(10)
+root_9.left = Node(20) # type: ignore
+root_9.right = Node(30) # type: ignore
+root_9.right.right = Node(60) # type: ignore
+root_9.left.left = Node(40) # type: ignore
+root_9.left.right = Node(50) # type: ignore
+res_burn = 0
+def burn_binary_tree(root,leaf,dist):
+    global res_burn
+    if root is None:
+        return 0
+    if root.data == leaf:
+        dist[0] = 0
+        return 1
+    left_dist,right_dist = [-1],[-1]
+    lh = burn_binary_tree(root.left,leaf,left_dist)
+    rh = burn_binary_tree(root.right,leaf,right_dist)
+    if left_dist[0]!=-1:
+        dist[0] = left_dist[0] + 1
+        res_burn = max(res_burn,rh+dist[0])
+    elif right_dist[0] != -1:
+        dist[0] = right_dist[0] + 1
+        res_burn = max(res_burn,lh + dist[0])
+    return max(lh,rh)+1
+print("Burn a binary tree from a leaf: ",burn_binary_tree(root_9,50,[-1]))
