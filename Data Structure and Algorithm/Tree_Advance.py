@@ -526,3 +526,130 @@ def burn_binary_tree(root,leaf,dist):
         res_burn = max(res_burn,lh + dist[0])
     return max(lh,rh)+1
 print("Burn a binary tree from a leaf: ",burn_binary_tree(root_9,50,[-1]))
+print()
+"""
+Problem Statement: Given a binary tree, our task is to count total nodes.  Two methods are discussed here, naive method which is O(n).  And an efficient method which is O(Log n * Log n).
+"""
+root_10 = Node(1)
+root_10.left = Node(2) # type: ignore
+root_10.right = Node(3) # type: ignore
+root_10.left.left = Node(4) # type: ignore
+root_10.left.right = Node(5) # type: ignore
+root_10.right.left = Node(9) # type: ignore
+root_10.right.right = Node(8) # type: ignore
+root_10.left.left.left = Node(6) # type: ignore
+root_10.left.left.right = Node(7) # type: ignore
+ 
+def count_node_complete_tree_1(root):
+    if root == None:
+        return 0
+    return 1 + count_node_complete_tree_1(root.left) + count_node_complete_tree_1(root.right)
+print("Count node of complete Binary Tree O(n): ",count_node_complete_tree_1(root_10))
+def count_node_complete_tree_2(root):
+    lh,rh = 0,0
+    curr = root
+    while curr:
+        lh+=1
+        curr = curr.left
+    curr = root
+    while curr:
+        rh+=1
+        curr = curr.right
+    if lh == rh:
+        return (1<<lh)-1
+    return 1 + count_node_complete_tree_2(root.left)+count_node_complete_tree_2(root.right)
+print("Count node of complete Binary Tree O(log(n)*log(n)): ",count_node_complete_tree_2(root_10))
+print()
+"""
+Serialize and Deserialize a Binary Tree
+    Naive Solution:
+        - First store Inorder traversal
+        - Store a separator
+        - Finally store Preorder or Postorder Traversal
+"""
+EMPTY = -1
+def serialize_binary_tree(root,arr):
+    if root is None:
+        arr.append(EMPTY)
+        return
+    arr.append(root.data)
+    serialize_binary_tree(root.left,arr)
+    serialize_binary_tree(root.right,arr)
+de_index = 0
+def deserialize_binary_tree(arr):
+    global de_index
+    if  de_index == len(arr):
+        return None
+    val = arr[de_index]
+    de_index += 1
+    if val == EMPTY:
+        return None
+    root =  Node(val)
+    root.left = deserialize_binary_tree(arr) # type: ignore
+    root.right = deserialize_binary_tree(arr) # type: ignore
+    return root
+
+"""
+Problem Statement: Iterative InOrder Traversal
+"""
+root_11 = Node(10)
+root_11.left = Node(20) # type: ignore
+root_11.right = Node(30) # type: ignore
+root_11.left.left = Node(40) # type: ignore
+root_11.left.right = Node(40) # type: ignore
+def iterative_inorder_traversal(root):
+    if root is None:
+        return
+    st = []
+    curr = root
+    while curr is not None:
+        st.append(curr)
+        curr = curr.left
+    while len(st)>0:
+        curr = st.pop()
+        print(curr.data,end=" ")
+        curr = curr.right
+        
+        while curr is not None:
+            st.append(curr)
+            curr = curr.left
+print("Iterative InOrder Traversal: ")
+iterative_inorder_traversal(root_11)
+print()
+print()
+"""
+Problem Statement: Iterative PreOrder Traversal & Space Optimized
+"""
+def iterative_preorder_traversal(root):
+    if root is None:
+        return
+    st = [root]
+    while len(st)>0:
+        curr = st.pop()
+        print(curr.data,end=" ")
+
+        if curr.right is not None:
+            st.append(curr.right)
+        if curr.left is not None:
+            st.append(curr.left)
+print("Iterative PreOrder Traversal: ")
+iterative_preorder_traversal(root_11)
+print()
+
+def iterative_preorder_traversal_space_opt(root):
+    if root == None:
+        return
+    st = []
+    curr = root
+    while len(st) or curr!=None:
+        while curr!=None:
+            print(curr.data,end=" ")
+            if curr.right!=None:
+                st.append(curr.right)
+            curr = curr.left
+        if len(st)>0:
+            curr = st[-1]
+            st.pop()
+print("Iterative PreOrder traversal Space-Optimized: ")
+iterative_preorder_traversal_space_opt(root_11)
+print()
