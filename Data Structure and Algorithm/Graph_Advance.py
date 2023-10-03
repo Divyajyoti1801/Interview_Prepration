@@ -1,4 +1,5 @@
 from collections import deque
+INT_MAX = 4294967296
 """
 GRAPH DATA STRUCTURE : Non-Linear Data Structure
 
@@ -204,3 +205,139 @@ adjacent_6 = [[1, 2], [0, 2], [0, 1], [4], [3]]
 print_graph(adjacent_6)
 print("DFS of a Disconnected Graph: ")
 DFS_disjoint(adjacent_6)
+print()
+"""
+Connected Components in DFS
+"""
+def DFS_Utility_2(adj,s,visited):
+    visited[s] = True
+    print(s,end=" ")
+    
+    for u in adj[s]:
+        if visited[u] == False:
+            DFS_Utility_2(adj,u,visited)
+
+def DFS_CC(adj):
+    visited = [False]*len(adj)
+    res = 0
+    for u in range(len(adj)):
+        if visited[u] == False:
+            res+=1
+            DFS_Utility_2(adj,u,visited)
+            print()
+    return res
+
+adjacent_7 = [[1, 2], [0, 2], [0, 1], [4], [3]]
+print_graph(adjacent_7)
+print("No. of Connected Components in the graph : ",DFS_CC(adjacent_7))
+print()
+"""
+Application of DFS
+    - Cycle Detection
+    - Topological Sorting (Dependencies Graph)
+    - Strongly Connected Components
+    - Solving Maze and Similar Puzzles
+    - Path Finding
+"""
+"""
+Shortest Path in an Unweighted Graph
+"""
+def shortest_path_unweighted_graph(adj,s,dist):
+    visited = [False] * len(adj)
+    q = deque()
+    visited[s] = True
+    q.append(s)
+    
+    while q:
+        u = q.popleft()
+        
+        for v in adj[u]:
+            if visited[v] == False:
+                dist[v] = dist[u] + 1
+                visited[v] = True 
+                q.append(v)
+adjacent_8 = [[] for i in range(4)]
+add_edge_in_graph(adjacent_8,0,1)
+add_edge_in_graph(adjacent_8,1,2)
+add_edge_in_graph(adjacent_8,2,3)
+add_edge_in_graph(adjacent_8,0,2)
+add_edge_in_graph(adjacent_8,0,3)
+dist_1 = [INT_MAX] * 4
+dist_1[0] = 0
+shortest_path_unweighted_graph(adjacent_8,0,dist_1)
+print("The Shortest Path in a unweighted graph: ",dist_1)
+print()
+
+"""
+Problem Statement: Detect Cycle in Undirected Graph
+"""
+def DFS_Utility_3(adj,s,visited,parent):
+    visited[s] = True
+    for u in adj[s]:
+        if visited[u] == False:
+            if DFS_Utility_3(adj,u,visited,s):
+                return True
+            elif u!=parent:
+                return True
+    return False
+def detect_cycle_undirected_graph(adj):
+    visited = [False]* len(adj)
+    for i in range(len(adj)):
+        if visited[i] == False:
+            if DFS_Utility_3(adj,i,visited,-1):
+                return True
+    return False
+print("Is there is cycle in an Undirected Graph: ",detect_cycle_undirected_graph(adjacent_8))
+print()
+"""
+Problem Statement : Detect Cycle in a Directed Graph
+"""
+def add_edge_directed_graph(adj,u,v):
+    adj[u].append(v)
+
+def DFS_Utility_4(adj,s,visited,recSt):
+    visited[s] = True
+    recSt[s] = True
+
+    for u in adj[s]:
+        if visited[u] ==False:
+            if DFS_Utility_4(adj,u,visited,recSt):
+                return True
+        elif recSt[u] == True:
+            return True
+    recSt[s] = False
+    return False
+
+def detect_cycle_directed_graph(adj):
+    visited = [False]*len(adj)
+    recSt = [False] *len(adj)
+
+    for i in range(len(adj)):
+        if visited[i] == False:
+            if DFS_Utility_4(adj,i,visited,recSt):
+                return True
+    return False
+adjacent_9 = [[] for i in range(4)]
+add_edge_directed_graph(adjacent_9,0,1)
+add_edge_directed_graph(adjacent_9,1,2)
+add_edge_directed_graph(adjacent_9,2,3)
+add_edge_directed_graph(adjacent_9,0,2)
+add_edge_directed_graph(adjacent_9,0,3)
+dist_2 = [INT_MAX] * 4
+dist_2[0] = 0
+print("Is there is cycle in a directed Graph: ",detect_cycle_directed_graph(adjacent_9))
+
+"""
+SORTING ALGO: Topological Sorting
+
+    BFS based solution:
+        - Store indegree of every vertices
+        - Create a Queue, q
+        - All all 0 indegree vertices to the q
+        - While q is not empty
+            - u = q.pop()
+            - Print u
+            - for every adjacent v of u
+                - Reduce indegree of v by 1
+                - if indegree of v becomes 0, add v to the q.
+""" 
