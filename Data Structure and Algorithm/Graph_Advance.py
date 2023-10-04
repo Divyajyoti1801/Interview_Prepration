@@ -326,11 +326,11 @@ add_edge_directed_graph(adjacent_9,0,3)
 dist_2 = [INT_MAX] * 4
 dist_2[0] = 0
 print("Is there is cycle in a directed Graph: ",detect_cycle_directed_graph(adjacent_9))
-
+print()
 """
 SORTING ALGO: Topological Sorting
-
-    BFS based solution:
+    - Directed Cyclic graph
+    BFS based solution (Khan's Algorithm):
         - Store indegree of every vertices
         - Create a Queue, q
         - All all 0 indegree vertices to the q
@@ -340,4 +340,162 @@ SORTING ALGO: Topological Sorting
             - for every adjacent v of u
                 - Reduce indegree of v by 1
                 - if indegree of v becomes 0, add v to the q.
+        - Time Complexity: O(V+E)
 """ 
+"""
+Implementation of Khan's Algorithm
+"""
+from collections import defaultdict
+
+class Graph_1:
+    def __init__(self,vertices):
+        self.graph = defaultdict(list)
+        self.V = vertices
+    def addEdge(self,u,v):
+        self.graph[u].append(v)
+    
+    def topological_sort(self):
+        in_degree = [0] * self.V
+
+        for i in self.graph:
+            for j in self.graph[i]:
+                in_degree[j]+=1
+        
+        queue = []
+        
+        for i in range(self.V):
+            if in_degree[i] == 0:
+                queue.append(i)
+        cnt = 0
+        top_order = []
+
+        while queue:
+            u = queue.pop(0)
+            top_order.append(u)
+
+            for i in self.graph[u]:
+                in_degree[i]-=1
+                if in_degree[i] == 0:
+                    queue.append(i)
+            cnt+=1
+        if cnt!=self.V:
+            print("There exists a cycle in the graph")
+        else:
+            print(top_order)
+print("Implementation of Khan's Algorithm")
+g = Graph_1(6)
+g.addEdge(5,2)
+g.addEdge(5,0)
+g.addEdge(4,0)
+g.addEdge(4,1)
+g.addEdge(2,3)
+g.addEdge(3,1)
+print("The Topological Sort of a Given Graph: ")
+g.topological_sort()
+print()
+"""
+Topological Sort : Using Depth-First-Search
+    Algorithm:
+        - Create an Empty stack st
+        - For every vertex u, do following
+            - if (u is not visited): DFS(u,st)
+        - While (st is not empty)
+            - pop an item from st and print it
+        - Normal DFS
+            - Mark U as visited
+            - For every adjacent v of u
+                - if (v is not visited): DFS(v,st)
+            - Push u to st
+        - Time Complexity : O(V + E)
+"""
+class Graph_2:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+
+    def addEdge(self,u,v):
+        self.graph[u].append(v)
+    
+    def topological_sort_DFS_util(self,v,visited,stack):
+        visited[v] = True
+        for i in self.graph[v]:
+            if visited[i] == False:
+                self.topological_sort_DFS_util(i,visited,stack)
+        stack.append(v)
+    
+    def topological_sort_DFS(self):
+        visited = [False] * self.V
+        stack = []
+        for i in range(self.V):
+            if visited[i] == False:
+                self.topological_sort_DFS_util(i,visited,stack)
+        print(stack[::-1])
+print("DFS Implementation of Topological Sort: ")
+g_2 = Graph_2(6)
+g_2.addEdge(5,2)
+g_2.addEdge(5,0)
+g_2.addEdge(4,0)
+g_2.addEdge(4,1)
+g_2.addEdge(2,3)
+g_2.addEdge(3,1)
+g_2.topological_sort_DFS()
+print()
+
+"""
+Shortest Path in Directed Acyclic Graph
+    - Initialize Dist[v] = [INF,INF,....,INF]
+    - dist[s] = 0
+    - Find a topological sort of the graph
+    - For every vertex u in the topological sort.
+        - For every adjacent v of u
+            - if dist[v] > dist[u] + weight(u,v):
+                dist[v] = dist[u] + weight(u,v)
+"""
+class Graph_3:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+    
+    def addEdge(self,u,v,w):
+        self.graph[u].append((v,w))
+    
+    def topological_sort_util(self,v,visited,stack):
+        visited[v] = True
+        if v is self.graph.keys():
+            for node,weight in self.graph[v]:
+                if visited[node] == False:
+                    self.topological_sort_util(node,visited,stack)
+        stack.append(v)
+    
+    def shortest_path(self,s):
+        visited = [False]*self.V
+        stack = []
+        
+        for i in range(self.V):
+            if visited[i] == False:
+                self.topological_sort_util(s,visited,stack)
+        dist = [float("Inf")] * self.V
+        dist[s] = 0
+        
+        while stack:
+            i = stack.pop()
+            for node,weight in self.graph[i]:
+                if dist[node]>dist[i] + weight:
+                    dist[node] = dist[i] + weight
+        
+        for i in range(self.V):
+            print (("%d" %dist[i]) if dist[i] != float("Inf") else "Inf" ,end=" ")
+
+g_3 = Graph_3(6)
+g_3.addEdge(0,1,5)
+g_3.addEdge(0,2,3)
+g_3.addEdge(1,3,6)
+g_3.addEdge(1,2,2)
+g_3.addEdge(2,4,4)
+g_3.addEdge(2,5,2)
+g_3.addEdge(2,3,7)
+g_3.addEdge(3,4,-1)
+g_3.addEdge(4,5,-2)
+print("Shortest Path acyclic directed Graph: ")
+g_3.shortest_path(1)
+print()
