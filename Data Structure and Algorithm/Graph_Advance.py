@@ -1,4 +1,5 @@
 from collections import deque
+import sys
 INT_MAX = 4294967296
 """
 GRAPH DATA STRUCTURE : Non-Linear Data Structure
@@ -498,4 +499,105 @@ g_3.addEdge(3,4,-1)
 g_3.addEdge(4,5,-2)
 print("Shortest Path acyclic directed Graph: ")
 g_3.shortest_path(1)
+print()
+
+"""
+Minimum Spanning Tree
+    - Tree Structure: Weighted and Connected Undirected Graph
+    - For Example:
+        :: Minimize the wire length and make sure that all computer's are connected to each other may be through intermediate computer.
+    - What is a Spanning Tree:
+        :: A tree which is connected by doesn't have any cycle
+            - V edges, but we want (V - 1) edges
+
+Prim's Algorithm (Cut-Edge Theory)
+    - It has two Sets
+        = In MST
+        = Not Yet in MST
+    - We go for edge which has minimum weight
+    
+    Ideas for Better Implementation: 
+        - The normal implementation time complexity O(V^2)
+        - Use Adjacency List representation
+        - Use min heap
+        - With this changes time complexity will become O((E + V) * log(V))
+"""
+class Graph_4:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = [[0 for column in range(vertices)] for row in range(vertices)]
+    
+    def print_minimum_spanning_tree(self,parent):
+        print("Edge \t Wight")
+        for i in range(1,self.V):
+            print(parent[i],"-",i,"\t",self.graph[i][parent[i]])
+    
+    def min_key(self,key,mstSet):
+        min = sys.maxsize
+        min_index = -1
+        for v in range(self.V):
+            if key[v]<min and mstSet[v] == False:
+                min = key[v]
+                min_index = v
+        return min_index
+    
+    def primary_mst(self):
+        key = [sys.maxsize] * self.V
+        parent = [None] * self.V
+        key[0] = 0
+        mstSet = [False] * self.V
+        parent[0] = -1 # type: ignore
+        
+        for count in range(self.V):
+            u = self.min_key(key,mstSet)
+            mstSet[u] = True
+            
+            for v in range(self.V):
+                if self.graph[u][v]>0 and mstSet[v] == False and key[v]>self.graph[u][v]:
+                    key[v] = self.graph[u][v]
+                    parent[v] = u # type: ignore
+        self.print_minimum_spanning_tree(parent)
+g_4 = Graph_4(5)
+g_4.graph = [[0, 2, 0, 6, 0],
+			[2, 0, 3, 8, 5],
+			[0, 3, 0, 0, 7],
+			[6, 8, 0, 0, 9],
+			[0, 5, 7, 9, 0]]
+g_4.primary_mst()
+print()
+
+"""
+Dijkstra's Shortest Path Algorithm
+    :: Given a weighted graph and a source, find shortest distances from sources to all other vertices.
+
+Interesting Facts/Questions:
+    - Does not work for negative weight edges
+    - Does the shortest path change if add a weight to all edges of the original Path
+
+Algorithm:
+    - Create an empty Priority Queue (or Min Heap),pq
+    - dist[v] = {inf,inf,....,inf}
+    - dist[s] = 0
+    - Insert all distance into pq
+    - While pq.empty() == false; u = pq.extractMin(); Relax all adjacent of u that are not in pq
+"""
+def dijkstra(graph,src):
+    V = len(graph)
+    dist = [float('inf') for i in range(V)]
+    dist[src] = 0
+    fin = [False for i in range(V)]
+
+    for count in range(V-1):
+        u = -1
+        for i in range(V):
+            if fin[i] == False and (u==-1 or dist[i]<dist[u]):
+                u = i
+        fin[u] = True
+            
+        for x in range(V):
+            if fin[x] == False and graph[u][x]!=0:
+                dist[x] = min(dist[x],dist[u]+graph[u][x])
+    return dist
+graph_1 = [[0,5,10,0],[5,0,3,20],[10,3,0,2],[0,20,2,0]]
+print("The Shortest Path Algorithm (Dijkstra Algorithm): ",dijkstra(graph_1,0))
 print()
