@@ -580,6 +580,11 @@ Algorithm:
     - dist[s] = 0
     - Insert all distance into pq
     - While pq.empty() == false; u = pq.extractMin(); Relax all adjacent of u that are not in pq
+
+Ideas for better implementation
+    - Use Adjacency list representation
+    - Use Min-Heap
+    - With above optimization we get Time Complexity O((V+E)*log(V))
 """
 def dijkstra(graph,src):
     V = len(graph)
@@ -601,3 +606,67 @@ def dijkstra(graph,src):
 graph_1 = [[0,5,10,0],[5,0,3,20],[10,3,0,2],[0,20,2,0]]
 print("The Shortest Path Algorithm (Dijkstra Algorithm): ",dijkstra(graph_1,0))
 print()
+
+"""
+Kosaraju's Algorithm (Strongly Connected Component Graphs)
+    - Printing all strongly connected components 
+
+Algorithm:
+    - Order the vertices in decreasing order of finish times in DFS
+    - Reverse all edges
+    - Do DFS of the reversed graph in the order obtained in Step-1. For every vertex print all reachable vertices as one strongly connected.
+
+Pseudo Code Step-1:
+    - Create an empty stack, st
+    - For every vertex u, do the following:
+        = if (u is not visited): DFSRec(u,st)
+    - While (st is not empty)
+        = Pop an item and add to result
+    - DFSRec(u,st)
+        = Mark u as visited
+        = For every adjacent v; if(v is not visited) DFSRec(v,st)
+        = st.push(u)
+Time Complexity: O(V+E)
+"""
+"""
+Bellman Ford Algorithm : Shortest Path Algorithm
+    - We first find shortest paths that are of one edge length. Then shortest paths that are of two edge length and so on.
+Algorithm : We relax all edges V-1 times
+"""
+class Graph_5:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = []
+    
+    def addEdge(self,u,v,w):
+        self.graph.append([u,v,w])
+    
+    def print_array(self,dist):
+        print("Vertex Distance from Source: ")
+        for i in range(self.V):
+            print("{0}\t\t{1}".format(i,dist[i]))
+    
+    def bellmanFord(self,src):
+        dist = [float("Inf")]*self.V
+        dist[src] = 0
+        for _ in range(self.V - 1):
+            for u,v,w in self.graph:
+                if dist[u]!= float("Inf") and dist[u]+w<dist[v]:
+                    dist[v] = dist[u] + w
+        
+        for u,v,w in self.graph:
+            if dist[u]!= float("Inf") and dist[u]+w<dist[v]:
+                print("Graph contains negative weight cycle")
+                return 
+        self.print_array(dist)
+print("Shortest Path Algorithm: ")
+g_5 = Graph_5(5)
+g_5.addEdge(0,1,-1)
+g_5.addEdge(0,2,4)
+g_5.addEdge(1,2,3)
+g_5.addEdge(1,3,2)
+g_5.addEdge(1,4,2)
+g_5.addEdge(3,2,5)
+g_5.addEdge(3,1,1)
+g_5.addEdge(4,3,-3)
+g_5.bellmanFord(0)
