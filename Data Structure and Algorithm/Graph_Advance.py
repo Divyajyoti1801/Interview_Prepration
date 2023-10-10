@@ -670,3 +670,152 @@ g_5.addEdge(3,2,5)
 g_5.addEdge(3,1,1)
 g_5.addEdge(4,3,-3)
 g_5.bellmanFord(0)
+print()
+
+"""
+Articulate Point (Undirected and Connected Graph)
+    - The Points, which when get removed create different components
+    - The Articulation points are negative points of a reliable system. A good reliable system doesn't have articulation point
+
+Naive Approach:
+    - Remove every vertex one by one and count number of connected components after the removal. If the count is more than one, then the removed vertex in an articulation point
+
+First Idea of Efficient Approach: 
+    - DFS tree has 2 or more children, then the root is an articulation point.
+    - Time Complexity : O(V * (V + E)).
+
+Second Idea of Efficient Approach
+    - If a non-root node u in DFS tree has a child v such that no ancestors are reachable from the subtree rooted with v, then u is an Articulation Point
+
+= Discovery Time 
+    - disc[u] : time at which DFS for u is called
+= Low value
+    - low[u] : Smallest discovery time reachable from u considering both types of edges
+= Implementation Details
+    - A non-root node u is an articulation point if there exists a child v such that low[v]>=disc[u]
+"""
+
+class Graph_6:
+    def __init__(self,vertices):
+        self.V =vertices
+        self.graph = defaultdict(list)
+        self.Time = 0
+    
+    def  addEdge(self,u,v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+    
+    def articulation_point_util(self,u,visited,ap,parent,low,disc):
+        children = 0
+        visited[u] = True
+        
+        disc[u] = self.Time
+        low[u] = self.Time
+        self.Time += 1
+
+        for v in self.graph[u]:
+            if visited[v] == False:
+                parent[v] = u
+                children+=1
+                self.articulation_point_util(v,visited,ap,parent,low,disc)
+
+                low[u] = min(low[u],low[v])
+
+                if parent[u] == -1 and children>1:
+                    ap[u] = True
+                
+                if parent[u] != -1 and low[v] >= disc[u]:
+                    ap[u] = True
+            elif v!= parent[u]:
+                low[u] = min(low[u],disc[v])
+    
+    def articulation_point(self):
+        visited = [False] * (self.V)
+        disc = [float("Inf")] * (self.V)
+        low = [float("Inf")] * (self.V)
+        parent = [-1] * (self.V)
+        ap = [False] * (self.V)
+
+        for i in range(self.V):
+            if visited[i] == False:
+                self.articulation_point_util(i,visited,ap,parent,low,disc)
+        for index,value in enumerate(ap):
+            if value == True: print(index,end=" ")
+g_6 = Graph_6(5);
+g_6.addEdge(1,0)
+g_6.addEdge(0,2)
+g_6.addEdge(2,1)
+g_6.addEdge(0,3)
+g_6.addEdge(3,4)
+print("Articulation Point in the graph: ")
+g_6.articulation_point()
+print("\n")
+
+
+"""
+Bridges in the Graph (UnDirectional and Unconnected Graph)
+    - Bridge is an Edge, if its get removed then number of connected component will get increased
+    - low[i] = Lowest reachable discovery time
+"""
+class Graph_7:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+        self.Time = 0
+    
+    def addEdge(self,u,v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+    
+    def bridgeUtil(self,u,visited,parent,low,disc):
+        visited[u] = True
+        disc[u] = self.Time
+        low[u] = self.Time
+        self.Time += 1
+
+        for v in self.graph[u]:
+            if visited[v] == False:
+                parent[v] = u
+                self.bridgeUtil(v,visited,parent,low,disc)
+
+                low[u] = min(low[u],low[v])
+                if(low[v] > disc[u]):
+                    print("%d %d" %(u,v))
+            elif v!= parent[u]:
+                low[u] = min(low[u],disc[v])
+    
+    def bridge(self):
+        visited = [False] * (self.V)
+        disc= [float("Inf")] * (self.V)
+        low= [float("Inf")] * (self.V)
+        parent= [-1] * (self.V)
+
+        for i in range(self.V):
+            if visited[i] == False:
+                self.bridgeUtil(i,visited,parent,low,disc)
+
+g_7 = Graph_7(5)
+g_7.addEdge(1,0)
+g_7.addEdge(0,2)
+g_7.addEdge(2,1)
+g_7.addEdge(0,3)
+g_7.addEdge(3,4)
+print("Bridges in the Graph: ")
+g_7.bridge()
+print("\n")
+
+"""
+Tarjan's Algorithm : Strongly Connected Components
+    - If all adjacent of a vertex 4 are done with recursive and disc[u] = low[u] then print this vertex and all other vertices in a stack.
+    - The Edge going back to Ancestor called Back Edge.
+    - The Edge going back to some other node is called Cross Edge.
+"""
+"""
+Kruskal's Algorithm
+    - Sort all edges in increasing order
+    - Initialize : MST = [] res = 0
+    - Do following does not become V-1
+        = if Adding e to MST does not cause a cycle
+            - MST = MST U {e}
+            - res = res + e.weight
+"""
