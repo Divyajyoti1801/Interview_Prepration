@@ -51,9 +51,20 @@ Graph Representation in Programming
                 = Find degree of u : theta(V)
                 = Add/Remove an Edge : theta(1)
                 = Add/Remove a Vertex : theta(V)
+    
+    - Adjacency List
+        = Array of list stores the connected vertices.
+        = Popularly represented as :
+            - Dynamic Sized Arrays (Mostly used due to cache friendliness)
+            - Linked Lists
+        
+        Properties of Adjacency List Representation:
+            - Space Required : theta(V + E)
+                = Undirected Graph : theta(V + (2*E))
+                = Directed Graph : theta(V + E)
 """
 """
-Implementation of Graph Representation through Adjacency Matrix
+Implementation of Graph Representation through Adjacency List (Linked List)
 """
 class adjacency_node:
     def __init__(self,data):
@@ -75,19 +86,39 @@ class Graph_Adjacency:
     
     def print_graph(self):
         for i in range(self.V):
-            print("Adjacency List of vertex {}\n".format(i),end="")
+            print("adjacency list of vertex {}: Head".format(i),end="")
             temp = self.graph[i]
             while temp:
                 print(" -> {}".format(temp.vertex),end=" ")
                 temp = temp.next
-            print("\n")
+            print()
 
-graph_adjacency = Graph_Adjacency(5)
-graph_adjacency.add_edge(0,1)
-graph_adjacency.add_edge(0,4)
-graph_adjacency.add_edge(1,2)
-graph_adjacency.add_edge(1,3)
-graph_adjacency.add_edge(1,4)
-graph_adjacency.add_edge(2,3)
-graph_adjacency.add_edge(3,4)
-graph_adjacency.print_graph()
+print("Graph representation through Adjacency List(Linked List) : ")
+graph_adjacency_1 = Graph_Adjacency(5)
+graph_adjacency_1.add_edge(0,1)
+graph_adjacency_1.add_edge(0,4)
+graph_adjacency_1.add_edge(1,2)
+graph_adjacency_1.add_edge(1,3)
+graph_adjacency_1.add_edge(1,4)
+graph_adjacency_1.add_edge(2,3)
+graph_adjacency_1.add_edge(3,4)
+graph_adjacency_1.print_graph()
+print()
+"""
+Implementation of Graph Representation through Adjacency List (Dynamic List)
+"""
+def add_edge_list(adj,u,v):
+    adj[u].append(v)
+    adj[v].append(u)
+
+def print_dynamic_list(adj):
+    for u,l in enumerate(adj):
+        print(u,l)
+print("Graph representation through Adjacency List(Dynamic List) : ")
+graph_Adjacency_2 = [[] for i in range(4)]
+add_edge_list(graph_Adjacency_2,0,1)
+add_edge_list(graph_Adjacency_2,0,2)
+add_edge_list(graph_Adjacency_2,1,2)
+add_edge_list(graph_Adjacency_2,1,3)
+print(graph_Adjacency_2)
+print()
