@@ -1,7 +1,7 @@
 """
 GREEDY ALGORITHM 
 """
-
+import heapq
 """
 General Structure of Greedy Algorithm
 
@@ -168,5 +168,65 @@ Greed Algo - 5 :
     - Huffman Coding
     - Used for lossless compression
     - Variable length coding
+        = Greedy Idea: The most frequent character has smallest code.
+        = Prefix Requirement for decompression: No code should be prefix of any other
 
+Huffman Algorithm
+    - Build a Binary Tree
+        = Every input character is a leaf
+        = Every left child is labelled as 0 and right edge as 1
+        = Every root to leaf path represents Huffman code of the leaf
+    - Traverse Binary Tree and Print the code
+I/P : ['a','d','b','e','f'] ; [10,50,20,40,80]
+
+Pseudo Code: 
+    - Create leaf nodes and build a Min-Heap 'h' of all the leaves initially
+    - While h.size() > 1:
+        (a) left = h.extractMin() 
+        (b) right = h.extractMin()
+        (c) Create a new tree node with 
+            * Character a '$'
+            * Frequency as left.freq + right.freq
+            * Left and Right children as left and right respectively.
+        (d) The only node left in h is our required Binary Tree.
 """
+class Node_hoffman:
+    def __init__(self,freq,symbol,left=None,right=None):
+        self.freq = freq
+        self.symbol = symbol
+        self.left = left
+        self.right = right
+        self.huff = ""
+    
+    def __lt__(self,nxt):
+        return self.freq<nxt.freq
+    
+def print_hoffman_node(node,val=""):
+    new_value = val + str(node.huff)
+    
+    if(node.left):
+        print_hoffman_node(node.left,new_value)
+    if(node.right):
+        print_hoffman_node(node.right,new_value)
+    if(not node.left and not node.right):
+        print(f"{node.symbol} -> {new_value}")
+
+#Inputs of Hoffman's Coding
+chars = ['a','b','c','d','e','f']
+freq = [5,9,12,13,16,45]
+nodes = []
+
+for x in range(len(chars)):
+    heapq.heappush(nodes,Node_hoffman(freq[x],chars[x]))
+while len(nodes) >1:
+    left = heapq.heappop(nodes)
+    right = heapq.heappop(nodes)
+    left.huff = 0
+    right.huff = 1
+    
+    new_node = Node_hoffman(left.freq+right.freq,left.symbol + right.symbol,left,right)
+    heapq.heappush(nodes,new_node)
+
+print("Hoffman Coding Algorithm output: ")
+print_hoffman_node(nodes[0])
+
