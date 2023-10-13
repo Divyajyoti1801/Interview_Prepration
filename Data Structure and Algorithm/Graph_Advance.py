@@ -2,8 +2,8 @@
 GRAPH DATA STRUCTURE
 """
 # Libraries we are going to use
-from collections import deque
-
+from collections import deque,defaultdict
+INT_MAX = 4294967296
 """
 Types of Graphs
 
@@ -254,18 +254,195 @@ Application of Breadth-First-Search
 Depth-First-Search for Un-Directed Connected Graph
     - We will pick lowest valued vertex as source to start DFS traversal
 """
-def DFS_utility(adj,s,visited):
+def DFS_utility_1(adj,s,visited):
     visited[s] = True
     print(s,end=" ")
     for u in adj[s]:
         if visited[u] == False:
-            DFS_utility(adj,u,visited)
+            DFS_utility_1(adj,u,visited)
 def Depth_First_Search(adj,s):
     visited = [False] * len(adj)
-    DFS_utility(adj,s,visited)
+    DFS_utility_1(adj,s,visited)
 print("Adjacent List of Undirected Connected Graph: ")
 adjacent_4 = [[1,2],[0,3,4],[0,3],[1,2,4],[1,3]]
 print_graph(adjacent_4)
 print("Depth First Search of an undirected connected graph: ")
 Depth_First_Search(adjacent_4,0)
 print("\n")
+
+"""
+Depth-First-Search for counting connected components in an Un-Directed Graph
+"""
+def DFS_utility_2(adj,s,visited):
+    visited[s] = True
+    for u in adj[s]:
+        if visited[u] == False:
+            DFS_utility_2(adj,u,visited)
+    
+def connected_components_DFS(adj):
+    visited = [False] * len(adj)
+    res = 0
+    for u in range(len(adj)):
+        if visited[u] == False:
+            res+=1
+            DFS_utility_2(adj,u,visited)
+    return res
+adjacent_5 = [[1,2],[0,2],[0,1],[4],[3]]
+print("Un-Directed Graph: ")
+print_graph(adjacent_5)
+print("No. of Connected Components in an Un-Directed Graph (DFS): ",connected_components_DFS(adjacent_5))
+print()
+
+"""
+Application of Depth-First-Search
+    - Cycle Detection
+    - Topological Sorting
+    - Strongly Connected Components
+    - Solving Maze and similar Puzzles
+    - Path Finding
+"""
+
+"""
+Shortest Path in Un-Weighted Graph
+"""
+def shortest_path_unWeighted(adj,s,dist):
+    visited = [False] * len(adj)
+    q = deque()
+    visited[s] = True
+    q.append(s)
+    while q:
+        u = q.popleft()
+        for v in adj[u]:
+            if visited[v] == False:
+                dist[v] = dist[u] + 1
+                visited[v] = True
+                q.append(v)
+
+adjacent_6 = [[] for i in range(4)]
+add_edge_list(adjacent_6,0,1)
+add_edge_list(adjacent_6,1,2)
+add_edge_list(adjacent_6,2,3)
+add_edge_list(adjacent_6,0,2)
+add_edge_list(adjacent_6,0,3)
+print("Un-Weighted Graph: ")
+print_graph(adjacent_6)
+dist_SPW = [INT_MAX]*4
+dist_SPW[0] = 0
+shortest_path_unWeighted(adjacent_6,0,dist_SPW)
+print("Shortest Path in Un-Weighted Graph: ",dist_SPW)
+print()
+
+"""
+Detect Cycle in Un-Directed Graph
+"""
+def DFS_utility_3(adj,s,visited,parent):
+    visited[s] =True
+    for u in adj[s]:
+        if visited[u]== False:
+            if DFS_utility_3(adj,u,visited,s):
+                return True
+            elif u!=parent:
+                return True
+    return False
+
+def detect_cycle_unDirected(adj):
+    visited = [False] * len(adj)
+    for i in range(len(adj)):
+        if(visited[i] == False):
+            if DFS_utility_3(adj,i,visited,-1):
+                return True
+    return False
+
+adjacent_7 = [[] for i in range(4)]
+add_edge_list(adjacent_7,0,1)
+add_edge_list(adjacent_7,1,2)
+add_edge_list(adjacent_7,2,3)
+add_edge_list(adjacent_7,0,2)
+add_edge_list(adjacent_7,0,3)
+print("Cycle Detection Graph: ")
+print_graph(adjacent_7)
+print("Is Graph is Cyclic (joint & disjoint) Undirected: ",detect_cycle_unDirected(adjacent_7))
+print()
+
+"""
+Detect Cycle in a Directed Graph
+"""
+def DFS_utility_4(adj,s,visited,rec_stack):
+    visited[s] = True
+    rec_stack[s] = True
+
+    for u in adj[s]:
+        if visited[u] == False:
+            if DFS_utility_4(adj,u,visited,rec_stack):
+                return True
+            elif rec_stack[u] == True:
+                return True
+    rec_stack[s] = False
+    return False
+
+def detect_cycle_directed(adj):
+    visited = [False] * len(adj)
+    rec_stack = [False] * len(adj)
+
+    for i in range(len(adj)):
+        if (visited[i] == False):
+            if DFS_utility_4(adj,i,visited,rec_stack):
+                return True
+    return False
+
+adjacent_8 = [[] for i in range(4)]
+add_edge_list(adjacent_8,0,1)
+add_edge_list(adjacent_8,1,2)
+add_edge_list(adjacent_8,2,3)
+add_edge_list(adjacent_8,0,2)
+add_edge_list(adjacent_8,0,3)
+print("Directed Graph for Cycle Detection: ")
+print_graph(adjacent_8)
+print("Is Cycle present in Directed Graph: ",detect_cycle_directed(adjacent_8))
+print()
+
+"""
+Topological Sorting (Kahn's BFS Based Algorithm)
+"""
+class Graph_kahn:
+    def __init__(self,vertices):
+        self.graph = defaultdict(list)
+        self.V = vertices
+    
+    def addEdge(self,u,v):
+        self.graph[u].append(v)
+    
+    def topologicalSort(self):
+        in_degree = [0] * self.V
+        for i in self.graph:
+            for j in self.graph[i]:
+                in_degree[j]+=1
+        queue = []
+        for i in range(self.V):
+            if in_degree[i] == 0:
+                queue.append(i)
+        cnt = 0
+        top_order = []
+
+        while queue:
+            u = queue.pop(0)
+            top_order.append(u)
+
+            for i in self.graph[u]:
+                in_degree[i]-=1
+                if in_degree[i] == 0:
+                    queue.append(i)
+            cnt+=1
+        if cnt!= self.V:
+            print("There exists a cycle in the Graph")
+        else:
+            print(top_order)
+g_1 = Graph_kahn(6)
+g_1.addEdge(5,2)
+g_1.addEdge(5,0)
+g_1.addEdge(4,0)
+g_1.addEdge(4,1)
+g_1.addEdge(2,3)
+g_1.addEdge(3,1)
+print("Topological Sort (Kahn's BFS Algorithm): ")
+g_1.topologicalSort()
