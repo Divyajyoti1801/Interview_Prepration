@@ -156,6 +156,10 @@ def Add_Edge_1(adj,u,v):
     adj[u].append(v)
     adj[v].append(u)
 
+def Add_Edge_2(adj,u,v):
+    adj[u].append(v)
+
+
 def print_graph(adj):
     for u,l in enumerate(adj):
         print(u,l)
@@ -446,3 +450,166 @@ g_1.addEdge(2,3)
 g_1.addEdge(3,1)
 print("Topological Sort (Kahn's BFS Algorithm): ")
 g_1.topologicalSort()
+print()
+
+"""
+Cycle Detection with Kahn's Algorithm (BFS)
+    - Using a Directed Graph
+"""
+def cycle_detection_2(adj):
+    V = len(adj)
+    in_degree = [0]*V
+    
+    for u in range(V):
+        for x in adj[u]:
+            in_degree[x]+=1
+    
+    q = deque()
+
+    for i in range(V):
+        if in_degree[i] == 0:
+            q.append(i)
+    count = 0
+
+    while q:
+        u = q.popleft()
+
+        for x in adj[u]:
+            in_degree[x] -=1
+            if in_degree[x] == 0:
+                q.append(x)
+        count +=1
+    
+    if count != V:
+        print("There exists a cycle in the graph")
+    else:
+        print("There exists no cycle in the graph")
+adjacent_9 = [[] for i in range(4)]
+Add_Edge_2(adjacent_9,0,1)
+Add_Edge_2(adjacent_9,1,2)
+Add_Edge_2(adjacent_9,2,3)
+Add_Edge_2(adjacent_9,0,2)
+Add_Edge_2(adjacent_9,0,3)
+print("Connected Graph for Cycle Detection: ")
+print_graph(adjacent_9)
+print("Is Cycle present in the graph: ")
+cycle_detection_2(adjacent_9)
+print()
+
+"""
+Topological Sort using Depth-First-Search
+
+Pseudo Code:
+    - Create an Empty stack st
+    - For every vertex u, do following
+        = if (u is not visited): DFS(u,st)
+    - While (st is not empty)
+        = Pop an item from st and print it.
+    - DFS(u,st)
+        = Mark u as visited
+        = For every adjacent v of u
+            - if (v is not visited): DFS(v,st)
+        = Push u to st
+"""
+class Graph_topological_DFS:
+    def __init__(self,vertices):
+        self.graph = defaultdict(list)
+        self.V = vertices
+    
+    def addEdge(self,u,v):
+        self.graph[u].append(v)
+    
+    def topological_sort_util(self,v,visited,stack):
+        visited[v] = True
+        for i in self.graph[v]:
+            if visited[i] == False:
+                self.topological_sort_util(i,visited,stack)
+        stack.append(v)
+    
+    def topological_sort(self):
+        visited = [False] * self.V
+        stack = []
+
+        for i in range(self.V):
+            if visited[i] == False:
+                self.topological_sort_util(i,visited,stack)
+        print(stack[::-1])
+
+graph_Adjacency_3 =Graph_topological_DFS(6)
+graph_Adjacency_3.addEdge(5,2)
+graph_Adjacency_3.addEdge(5,0)
+graph_Adjacency_3.addEdge(4,0)
+graph_Adjacency_3.addEdge(4,1)
+graph_Adjacency_3.addEdge(2,3)
+graph_Adjacency_3.addEdge(3,1)
+print("Graph for Topological Sort DFS: ")
+graph_Adjacency_3.topological_sort()
+print()
+
+"""
+Shortest Path in a Directed_Acyclic_Graph
+
+Pseudo Code:
+    shortest_path(adj,s)
+        - Initialize dist[v] = {INF,INF,...,INF}
+        - dist[s] = 0
+        - Find a topological sort of the graph
+        - For every vertex u in the topological sort.
+            = For every adjacent v of u.
+                - if dist[v] > dist[u] + weight(u,v)
+                    dist[v] = dist[u] + weight(u,v)
+"""
+class Graph_DAG:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+    
+    def add_edge(self,u,v,w):
+        self.graph[u].append((v,w))
+    
+    def topological_sort_util(self,v,visited,stack):
+        visited[v] = True
+        
+        if v in self.graph.keys():
+            for node,weight in self.graph[v]:
+                if visited[node] == False:
+                    self.topological_sort_util(node,visited,stack)
+        stack.append(v)
+
+    def shortest_path(self,s):
+        visited=[False] * self.V
+        stack = []
+        for i in range(self.V):
+            if visited[i] == False:
+                self.topological_sort_util(s,visited,stack)
+        dist = [float("Inf")] * self.V
+        dist[s] = 0
+
+        while stack:
+            i = stack.pop()
+            for node,weight in self.graph[i]:
+                if dist[node] > dist[i] + weight:
+                    dist[node] = dist[i] + weight
+        for i in range(self.V):
+            print("%d"%dist[i] if dist[i]!= float("Inf")else "Inf", end = " ")
+graph_dag = Graph_DAG(6)
+graph_dag.add_edge(0,1,5)
+graph_dag.add_edge(0,2,3)
+graph_dag.add_edge(1,3,6)
+graph_dag.add_edge(1,2,2)
+graph_dag.add_edge(2,4,4)
+graph_dag.add_edge(2,5,2)
+graph_dag.add_edge(2,3,7)
+graph_dag.add_edge(3,4,-1)
+graph_dag.add_edge(4,5,-2)
+print("Shortest distance from source 1: ")
+graph_dag.shortest_path(1)
+
+"""
+Minimum Spanning Tree : Prim's Algorithm
+    - Case Study: Minimize the wire length and make sure that all computers are connected to each other may be through intermediate computers
+
+    - Given a weighted, undirected and connected graph, find minimum spanning tree of it.
+    - SPANNING TREE : is a tree there should not be in cycle and connect each vertices.
+
+"""
