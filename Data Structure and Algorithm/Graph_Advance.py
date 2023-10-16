@@ -3,6 +3,7 @@ GRAPH DATA STRUCTURE
 """
 # Libraries we are going to use
 from collections import deque,defaultdict
+import sys
 INT_MAX = 4294967296
 """
 Types of Graphs
@@ -604,12 +605,96 @@ graph_dag.add_edge(3,4,-1)
 graph_dag.add_edge(4,5,-2)
 print("Shortest distance from source 1: ")
 graph_dag.shortest_path(1)
-
+print("\n")
 """
 Minimum Spanning Tree : Prim's Algorithm
     - Case Study: Minimize the wire length and make sure that all computers are connected to each other may be through intermediate computers
 
     - Given a weighted, undirected and connected graph, find minimum spanning tree of it.
-    - SPANNING TREE : is a tree there should not be in cycle and connect each vertices.
+    - SPANNING TREE : A tree there should not be in cycle and connect each vertices.
+
+Better Implementation
+    - Use adjacency list representation
+    - Use Min-Heap
+    - With this optimization we get time as O((E+V)* log(V)) which can be written as O(E log(V)) for a connected graph   
+"""
+class Graph_Prims:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph=[[0 for column in range(vertices)] for row in range(vertices)]
+    
+    def print_MST(self,parent):
+        print("Edge \tWeight")
+        for i in range(1,self.V):
+            print(parent[i],"-",i,"\t",self.graph[i][parent[i]])
+    
+    def min_key(self,key,mstSet):
+        min = sys.maxsize
+        min_index = -1
+        for v in range(self.V):
+            if key[v] < min and mstSet[v] == False:
+                min = key[v]
+                min_index = v
+        return min_index
+    
+    def prims_algo(self):
+        key = [sys.maxsize] *self.V
+        parent = [None] * self.V
+        key[0] = 0
+        mst_set= [False] * self.V
+        parent[0] = -1 # type: ignore
+
+        for count in range(self.V):
+            u = self.min_key(key,mst_set)
+            mst_set[u] = True
+            for v in range(self.V):
+                if self.graph[u][v] > 0 and mst_set[v] == False and key[v]>self.graph[u][v]:
+                    key[v] = self.graph[u][v]
+                    parent[v] = u # type: ignore
+        self.print_MST(parent)
+
+graph_adjacency_4 = Graph_Prims(5)
+graph_adjacency_4.graph = [[0, 2, 0, 6, 0],
+			[2, 0, 3, 8, 5],
+			[0, 3, 0, 0, 7],
+			[6, 8, 0, 0, 9],
+			[0, 5, 7, 9, 0]]
+graph_adjacency_4.prims_algo()
+print()
 
 """
+Dijkstra's Algorithm
+    - Given a weighted graph and a source find shortest distance from source to all other vertices.
+    - Doesn't work for negative weight edge
+    - Does the shortest path changes if add a weight to all edges of the original graph. -- YES
+
+Pseudo Code:
+    - Create empty Priority Queue (or Min-Heap), pq
+    - dist[v] = {Inf,Inf,Inf.......}
+    - dist[s] = 0
+    - Insert all distance into pq
+    - While pq.empty() == false
+        {
+            u = pq.extractMin() --> O(log(V))
+            Relax all adjacent of u that are not in pq --> O(log(V))
+        }
+"""
+def dijkstra_algo(graph,src):
+    V = len(graph)
+    dist = [float("inf") for i in range(V)]
+    dist[src] = 0
+    fin = [False for i in range(V)]
+    
+    for count in range(V-1):
+        u = -1
+        for i in range(V):
+            if fin[i] == False and (u == -1 or dist[i]<dist[u]):
+                u = i
+        fin[u] = True
+        for x in range(V):
+            if(fin[x]== False and graph[u][x]!=0):
+                dist[x] = min(dist[x],dist[u]+graph[u][x])
+    return dist
+graph_adjacency_5 = [[0,5,10,0],[5,0,3,20],[10,3,0,2],[0,20,2,0]]
+print("Dijkstra's Algo Source to all other vertices to shortest path distance: ",dijkstra_algo(graph_adjacency_5,0))
+print()
