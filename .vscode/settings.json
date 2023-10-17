@@ -4,5 +4,8 @@
   },
   "python.formatting.provider": "none",
   "python.analysis.typeCheckingMode": "basic",
-  "cSpell.words": ["compre"]
+  "cSpell.words": [
+    "compre"
+  ],
+  "python.analysis.autoImportCompletions": true
 }

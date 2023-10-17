@@ -698,3 +698,134 @@ def dijkstra_algo(graph,src):
 graph_adjacency_5 = [[0,5,10,0],[5,0,3,20],[10,3,0,2],[0,20,2,0]]
 print("Dijkstra's Algo Source to all other vertices to shortest path distance: ",dijkstra_algo(graph_adjacency_5,0))
 print()
+
+"""
+Kosaraju's Algorithm of Strongly Connected Components
+    - Based on Depth-First-Search
+    - Traverse Direction : Sync Compo to Starting Compo
+Algorithm Steps:
+    Step 1 : Order the vertices in decreasing order of finish times in DFS
+    Step 2 : Reverse all edges
+    Step 3 : Do DFS of the reversed graph in the order obtained in Step 1. For every vertex, print all reachable vertices as one Strongly Connected Component.
+
+    Implementation of Step-1:
+        - Create an empty stack,st
+        - For every vertex u, do the following:
+            - if u is not visited: DFS_utility(u,st)
+        - While(st is not empty)
+            - pop an item and add to result
+        - DFSRec(u,st)
+            = Mark u as visited
+            = For every adjacent v
+                - if v is not visited: DFS_utility(v,st)
+            = st.push(u)
+"""
+class Graph_Kosaraju:
+    def DFS(self,curr,des,adj,vis):
+        if curr == des:
+            return True
+        vis[curr] = 1
+        for x in adj[curr]:
+            if not vis[x]:
+                if self.DFS(x,des,adj,vis):
+                    return True
+        return False
+    
+    def is_path(self,src,des,adj):
+        vis = [0] * (len(adj) + 1)
+        return self.DFS(src,des,adj,vis)
+    
+    def strongly_connected_component(self,n,a):
+        ans = []
+        
+        is_scc = [0]*(n+1)
+
+        adj = [[] for _ in range(n+1)]
+        
+        for i in range(len(a)):
+            adj[a[i][0]].append(a[i][1])
+        
+        for i in range(1,n+1):
+            if not is_scc[i]:
+                scc = [i]
+                for j in range(i+1,n+1):
+                    if not is_scc[j] and self.is_path(i,j,adj) and self.is_path(j,i,adj):
+                        is_scc[j] = 1
+                        scc.append(j)
+                ans.append(scc)
+        return ans
+
+graph_kosaraju = Graph_Kosaraju()
+graph_kosaraju_edges= [[1,3],[1,4],[2,1],[3,2],[4,5]]
+print("Kosaraju's Algorithm (Find Strongly Connected Components): ",graph_kosaraju.strongly_connected_component(5,graph_kosaraju_edges))
+print()
+"""
+Bellman Ford Algorithm : Dynamic Programming Algorithm
+    - Counters downside of Dijkstra's Algorithm of negative weights.
+    - Solve the same problem shortest path from source to all vertices.
+Idea:
+    - We first find shortest paths that are of one edge length. Then shortest paths that are of two edge length and so on.
+Algorithm: We relax all edges V-1 times
+    - d[v] = {Inf,Inf,......Inf}
+    - d[s] = 0
+    - for (count = 0; count < (V-1); count++):
+        = if(d[v] > d[u] + weight(u,v)):
+            d[v] = d[u] + weight(u,v)
+    - for every edge(u,v):
+        = if(d[v] > d[u] + weight(u,v)):
+            print("Negative weight cycle found")
+
+Time Complexity : O(V*E)
+"""
+class Graph_BellmanFord:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = []
+    
+    def add_edge(self,u,v,w):
+        self.graph.append([u,v,w])
+    
+    def print_array(self,dist):
+        print("Vertex distance from source: ")
+        for i in range(self.V):
+            print("{0}\t\t{1}".format(i,dist[i]))
+    
+    def bellmanFord_algo(self,src):
+        dist = [float("Inf")] * self.V
+        dist[src] = 0
+        
+        for _ in range(self.V - 1):
+            for u,v,w, in self.graph:
+                if dist[u] != float("Inf") and dist[u] + w < dist[v]:
+                    dist[v] = dist[u] + w
+        
+        for u,v,w in self.graph:
+            if dist[u] != float("Inf") and dist[u] + w < dist[v]:
+                print("Graph Contains negative weight Cycle")
+                return
+        self.print_array(dist)
+print("Bellman Ford Algorithm")
+graph_bellmanford = Graph_BellmanFord(5)
+graph_bellmanford.add_edge(0,1,-1)
+graph_bellmanford.add_edge(0,2,4)
+graph_bellmanford.add_edge(1,2,3)
+graph_bellmanford.add_edge(1,3,2)
+graph_bellmanford.add_edge(1,4,2)
+graph_bellmanford.add_edge(3,2,5)
+graph_bellmanford.add_edge(3,1,1)
+graph_bellmanford.add_edge(4,3,-3)
+graph_bellmanford.bellmanFord_algo(0)
+
+"""
+Articulation Point
+    - Undirected & Connected Graph
+    - A point with its removal it created more connected components is called Articulation Point
+
+Efficient First Idea : 
+    - If root of DFS Tree has 2 or more children, then the root is an articulation point.
+    - Time Complexity : O(V * (V+E))
+    - This idea can only be used for root of DFS Tree
+
+Efficient Second Idea :
+    - If a non-root node u in DFS Tree has a child v such that no ancestors are reachable from the subtree rooted with v, then u is an articulation point.
+"""
