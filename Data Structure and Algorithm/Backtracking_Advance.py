@@ -1,6 +1,7 @@
 """
 BACKTRACKING ADVANCE
 """
+import math
 
 """
 Concept of Backtracking - 1
@@ -11,6 +12,9 @@ O/P : ["ACB","BAC","BCA","CBA"]
 
 Backtracking Time Complexity  < O(n! * n)
 """
+from re import L
+
+
 def permutation_of_string_naive(str,l,r):
     if l == r:
         if "AB" not in ''.join(str):
@@ -92,10 +96,104 @@ for i in range(len(rat_maze)):
     print()
 print("Solution of Rat Maze: ")
 solve_maze_problem(rat_maze)
-
+print()
 """
 Concept of Backtracking - 3
     - N Queen's Problem : The problem of placing N chess queens on an N*N chessboard so that no two queens attack each other.
     - Naive Solution : Generate all permutation of row number
     - Backtracking Solution : Cut down recursion tree as soon as we find infeasibility.
 """
+N_Queens_Board = [[False for i in range(3)] for i in range(3)]
+def N_Queens_Safe(row,col):
+    for i in range(col):
+        if N_Queens_Board[row][i]:
+            return False
+        i,j = row,col
+        while i>=0 and j>=0:
+            if N_Queens_Board[i][j]:
+                return False
+            i-=1
+            j-=1
+        i,j=row,col
+        while i<3 and j<0:
+            if N_Queens_Board[i][j]:
+                return False
+            i+=1
+            j-=1
+    return True
+def N_Queens_Sol():
+    if N_Queens_utility(0) == False:
+        return False
+    print(N_Queens_Board)
+    return False
+
+def N_Queens_utility(col):
+    if col == 3:
+        return True
+    for i in range(3):
+        if N_Queens_Safe(i,col):
+            N_Queens_Board[i][col] = True
+            if N_Queens_utility(col+1):
+                return True
+            N_Queens_Board[i][col] = False
+    return False
+print("N-Queens Problem : ")
+N_Queens_Sol()
+print()
+
+"""
+Concept of Backtracking - 4
+    - Sudoku Problem
+    - Rules:
+        = Distinct Rows
+        = Distinct Columns
+        = Sub-Matrix Distinct
+"""
+def sudoku_safe(board,row,col,num):
+    N = len(board)
+    for d in range(N):
+        if board[row][d] == num:
+            return False
+    
+    for r in range(N):
+        if board[r][col] == num:
+            return False
+    s = int(math.sqrt(N))
+    box_row_start = row - row%s
+    box_col_start = col - col%s
+    
+    for r in range(box_row_start,box_row_start+s):
+        for d in range(box_col_start,box_col_start+s):
+            if board[r][d] == num:
+                return False
+    return True
+
+def sudoku_sol(board):
+    N = len(board)
+    row = -1
+    col = -1
+    isEmpty = True
+    
+    for i in range(N):
+        for j in range(N):
+            if board[i][j] == 0:
+                row = i
+                col = j
+                isEmpty = False
+                break
+        if not isEmpty:
+            break
+    if isEmpty:
+        return True
+    for num in range(1,N+1):
+        if sudoku_safe(board,row,col,num):
+            board[row][col] = num
+            if sudoku_sol(board):
+                return True
+            else:
+                board[row][col] = 0
+    return False
+sudoku_board = [[1,0,3,0],[0,0,2,1],[0,1,0,2],[2,4,0,0]]
+sudoku_sol(sudoku_board)
+print("Sudoku Problem : ",sudoku_board)
+print()
