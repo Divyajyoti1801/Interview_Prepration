@@ -815,7 +815,7 @@ graph_bellmanford.add_edge(3,2,5)
 graph_bellmanford.add_edge(3,1,1)
 graph_bellmanford.add_edge(4,3,-3)
 graph_bellmanford.bellmanFord_algo(0)
-
+print()
 """
 Articulation Point
     - Undirected & Connected Graph
@@ -828,4 +828,249 @@ Efficient First Idea :
 
 Efficient Second Idea :
     - If a non-root node u in DFS Tree has a child v such that no ancestors are reachable from the subtree rooted with v, then u is an articulation point.
+
+Implementation Details:
+    - discovery[u] : Time at which DFS for u is called
+    - low[u] : Lowest discovery time reachable from u considering both types of edges
+    - A non-root node u is an articulation point if there exist a child v such that low[v]>=discovery[u]
+
+    Node : 0 1 2 3 4 5 6
+    Disc : 1 2 3 4 5 6 7
+    Low  : 1 1 1 1 5 5 5
 """
+class Graph_Articulation:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+        self.Time = 0
+    
+    def add_edge(self,u,v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+    
+    def articulation_point_util(self,u,visited,ap,parent,low,disc):
+        children = 0
+        visited[u] = True
+        
+        disc[u] = self.Time
+        low[u] = self.Time
+
+        self.Time +=1
+
+        for v in self.graph[u]:
+            if visited[v] == False:
+                parent[v] = u
+                children += 1
+                self.articulation_point_util(v,visited,ap,parent,low,disc)
+                low[u] = min(low[u],low[v])
+
+                if parent[u]==-1 and children>1:
+                    ap[u] = True
+                
+                if parent[u]!= -1 and low[v]>=disc[u]:
+                    ap[u] = True
+            elif v!= parent[u]:
+                low[u] = min(low[u],disc[v])
+    
+    def articulation_point(self):
+        visited = [False] * (self.V)
+        disc = [float("Inf")] * (self.V)
+        low = [float("Inf")] * (self.V)
+        parent = [-1] * (self.V)
+        ap = [False] * (self.V)
+        for i in range(self.V):
+            if visited[i] == False:
+                self.articulation_point_util(i,visited,ap,parent,low,disc)
+        for index,value in enumerate(ap):
+            if value == True: print(index,end=" ")
+graph_articulation = Graph_Articulation(5)
+graph_articulation.add_edge(1,0)
+graph_articulation.add_edge(0,2)
+graph_articulation.add_edge(2,1)
+graph_articulation.add_edge(0,3)
+graph_articulation.add_edge(3,4)
+print("Articulation Point in the graph: ")
+graph_articulation.articulation_point()
+print("\n")
+
+"""
+Bridge in Graph
+    - Rule : low[v]>discovery[u]
+"""
+class Graph_Bridge:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = defaultdict(list)
+        self.Time = 0
+
+    def add_Edge(self,u,v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+    
+    def bridge_util(self,u,visited,parent,low,disc):
+        visited[u] = True
+        disc[u] = self.Time
+        low[u] = self.Time
+        self.Time +=1
+
+        for v in self.graph[u]:
+            if visited[v] == False:
+                parent[v] = u
+                self.bridge_util(v,visited,parent,low,disc)
+                low[u] = min(low[u],low[v])
+                if low[v]>disc[u]:
+                    print("%d %d"%(u,v))
+            elif v!= parent[u]:
+                low[u] = min(low[u],disc[v])
+
+    def bridge(self):
+        visited = [False] * self.V
+        disc = [float("Inf")] * self.V
+        low = [float("Inf")] * self.V
+        parent = [-1] * self.V
+        
+        for i in range(self.V):
+            if visited[i] == False:
+                self.bridge_util(i,visited,parent,low,disc)
+
+graph_bridge = Graph_Bridge(5)
+graph_bridge.add_Edge(1,0)
+graph_bridge.add_Edge(0,2)
+graph_bridge.add_Edge(2,1)
+graph_bridge.add_Edge(0,3)
+graph_bridge.add_Edge(3,4)
+print("Bridge in the Graph: ")
+graph_bridge.bridge()
+print()
+
+"""
+Tarjan's Algorithm:
+    - If all adjacent a vertex 4  are sone with recursive and disc[u] = low[u], then print this vertex all others in a stack
+    - Back Edge : The edge which goes back to ancestor
+    - Cross Edge : The edge which goes back to some other node
+"""
+class Graph_Tarjan:
+    def __init__(self,vertices):
+        self.V =vertices
+        self.graph = defaultdict(list)
+        self.Time = 0
+    
+    def add_edge(self,u,v):
+        self.graph[u].append(v)
+    
+    def tarjan_util(self,u,low,disc,stackMember,st):
+        disc[u] = self.Time
+        low[u] = self.Time
+        self.Time+=1
+        stackMember[u] = True
+        st.append(u)
+
+        for v in self.graph[u]:
+            if disc[v]==-1:
+                self.tarjan_util(v,low,disc,stackMember,st)
+                low[u] = min(low[u],low[v])
+            elif stackMember[v] == True:
+                low[u] = min(low[u],disc[v])
+        
+        w = -1
+        if low[u] == disc[u]:
+            while w!=u:
+                w = st.pop()
+                print(w,end = " ")
+                stackMember[w] = False
+            print()
+        
+    def tarjan(self):
+        disc = [-1] * (self.V)
+        low = [-1] * (self.V)
+        stackMember = [False] * (self.V)
+        st = []
+        for i in range(self.V):
+            if(disc[i] == -1):
+                self.tarjan_util(i,low,disc,stackMember,st) # type: ignore
+graph_tarjan = Graph_Tarjan(5)
+graph_tarjan.add_edge(1,0)
+graph_tarjan.add_edge(0,2)
+graph_tarjan.add_edge(2,1)
+graph_tarjan.add_edge(3,4)
+print("Tarjan Algorithm of strongly connected component: ")
+graph_tarjan.tarjan()
+print("\n")
+
+"""
+Kruskal's Algorithm
+    - Spanning : still a path from vertex to each vertex and it should be tree and no cycle must exist.
+
+Algorithm : 
+    - Sort all edges in increasing order
+    - Initialize : MST = [],res = 0
+    - Do following for every edge 'e' while MST size does not become V-1
+        - if Adding e to MST does not cause a cycle 
+            = MST = MST U {e}
+            = res = res + e.weight
+    - return res
+Time Complexity : O(E*log(E) + V + E) = O(E*log(E))
+"""
+class Graph_Kruskal:
+    def __init__(self,vertices):
+        self.V = vertices
+        self.graph = []
+
+    def add_edge(self,u,v,w):
+        self.graph.append([u,v,w])
+    
+    def find(self,parent,i):
+        if parent[i] == i:
+            return i
+        return self.find(parent,parent[i])
+    
+    def apply_union(self,parent,rank,x,y):
+        x_root= self.find(parent,x)
+        y_root= self.find(parent,x)
+        if rank[x_root] < rank[y_root]:
+            parent[x_root] = y_root
+        elif rank[x_root] > rank[y_root]:
+            parent[y_root] = x_root
+        else:
+            parent[y_root] = x_root
+            rank[x_root] +=1
+    
+    def kruskal(self):
+        result = []
+        i,e = 0, 0
+        self.graph = sorted(self.graph,key = lambda item:item[2])
+        parent = []
+        rank = []
+        for node in range(self.V):
+            parent.append(node)
+            rank.append(0)
+        while e<self.V - 1:
+            u,v,w = self.graph[i]
+            i= i + 1
+            x = self.find(parent,u)
+            y = self.find(parent,v)
+            if x!= y:
+                e = e + 1
+                result.append([u,v,w])
+                self.apply_union(parent,rank,x,y)
+        for u,v,weight in result:
+            print("%d - %d : %d"%(u,v,weight))
+graph_kruskal = Graph_Kruskal(6)
+graph_kruskal.add_edge(0,1,4)
+graph_kruskal.add_edge(0,2,4)
+graph_kruskal.add_edge(1,2,2)
+graph_kruskal.add_edge(1,0,4)
+graph_kruskal.add_edge(2,0,4)
+graph_kruskal.add_edge(2,1,2)
+graph_kruskal.add_edge(2,3,3)
+graph_kruskal.add_edge(2,5,2)
+graph_kruskal.add_edge(2,4,4)
+graph_kruskal.add_edge(3,2,3)
+graph_kruskal.add_edge(3,4,3)
+graph_kruskal.add_edge(4,2,4)
+graph_kruskal.add_edge(4,3,3)
+graph_kruskal.add_edge(5,2,2)
+graph_kruskal.add_edge(5,4,3)
+print("Kruskal's Algorithm (Minimum Spanning Tree) : ")
+graph_kruskal.kruskal()
+print("\n")
