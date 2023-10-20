@@ -1,6 +1,7 @@
 """
 DYNAMIC PROGRAMMING
 """
+import sys
 """
 Introduction
     - In simple words, it is an organization over plain recursion.
@@ -29,9 +30,9 @@ def fibonacci_DP_1(n):
     if memoization[n] != None:
         return memoization[n]
     if n == 0 or n == 1:
-        memoization[n] = n
+        memoization[n] = n # type: ignore
     else:
-        memoization[n] = fibonacci_DP_1(n-1) + fibonacci_DP_1(n-2)
+        memoization[n] = fibonacci_DP_1(n-1) + fibonacci_DP_1(n-2)  # type: ignore
     return memoization[n]
 print("Fibonacci number (Memoization): ",fibonacci_DP_1(6))
 """
@@ -256,3 +257,92 @@ def Maximum_Increasing_Subsequence(arr):
                 max_is[i] = min(max_is[i], arr[i] + max_is[j])
     return max(max_is)
 print("LIS V-1: Maximum Sum of increasing  subsequence: ",Maximum_Increasing_Subsequence([3,1,10,3,4,7]))
+print()
+"""
+DP - 5 :
+    - Minimum coins to make a value
+    - I/P : coin = [25,10,5], val = 30  ; O/P : 2
+
+Idea for the Recursive solution:
+    - if coin[i] > val: Ignore the coin
+    - Else:
+        = Recursively call for val - coin[i] as new value
+        = Update the result if required
+"""
+def Minimum_Coins_For_Value_Recursive(coin,val):
+    if val == 0:
+        return 0 
+    n = len(coin)
+    res = -1
+    for i in range(n):
+        if coin[i] <= val:
+            sub_res = Minimum_Coins_For_Value_Recursive(coin,val-coin[i])
+            if sub_res!=-1:
+                if res == -1 or (sub_res+1)<res:
+                    res= sub_res + 1
+    return res
+print("Minimum Coins for value (Recursive): ",Minimum_Coins_For_Value_Recursive([25,10,5],30))
+print()
+
+"""
+DP - 6 :
+    - Minimum jumps to reach end
+    - I/P : arr = [3,4,2,1,2,1] ; O/P : 2
+"""
+def Minimum_Jumps_To_Reach_End(arr,n):
+    if n == 1:
+        return 0
+    res = sys.maxsize
+    for i in range(n-1):
+        if i + arr[i] >= n-1:
+            sub_res = Minimum_Jumps_To_Reach_End(arr,i+1)
+            if sub_res!= sys.maxsize:
+                res = min(res,sub_res+1)
+    return res
+print("Minimum Jumps To Reach End (Recursive) : ",Minimum_Jumps_To_Reach_End([3,4,2,1,2,1],len([3,4,2,1,2,1])))
+def Minimum_Jumps_To_Reach_End_Iterative(arr):
+    n = len(arr)
+    dp=[sys.maxsize] * n
+    dp[0] = 0
+    for i in range(1,n):
+        for j in range(i):
+            if (i<=j + arr[j]) and dp[j] != sys.maxsize:
+                dp[i] = min(dp[i],dp[j]+1)
+                break
+    return dp[n-1]
+print("Minimum Jumps To Reach End (Iterative) : ",Minimum_Jumps_To_Reach_End_Iterative([3,4,2,1,2,1]))
+print()
+
+"""
+DP - 7 :
+    - 0/1 Knapsack Problem
+    - v=[10,40,30,50], w = [5,4,6,3] W = 10
+
+DP-Solution:
+    - KS(W,wt,val,n) = { 0 : if n==0 or W==0;
+                         KS(W,wt,val,n-1) if wt[n-1]>W;
+                         max(KS(W,wt,val,n-1),KS*(W-wt[n-1],wt,val,n-1)+val[n-1])                    
+                        }
+"""
+def KnapSack_Recursive(W,wt,val,n):
+    if n==0 or W==0:
+        return 0
+    if wt[n-1]>W:
+        return KnapSack_Recursive(W,wt,val,n-1)
+    else:
+        return max(val[n-1]+KnapSack_Recursive(W-wt[n-1],wt,val,n-1),KnapSack_Recursive(W,wt,val,n-1))
+DP_array_1 =[10,40,30,50]
+print("Knapsack Problem (Recursive): ",KnapSack_Recursive(10,[5,4,6,3],DP_array_1,len(DP_array_1)))
+
+def KnapSack_Iterative(W,wt,val):
+    n = len(wt)
+    dp = [[0 for x in range(W+1)] for x in range(n+1)]
+    for i in range(1,n+1):
+        for j in range(1,W+1):
+            if wt[i-1]<= j:
+                dp[i][j] = max(dp[i-1][j],dp[i-1][j-wt[i-1]]+val[i-1])
+            else:
+                dp[i][j] = dp[i-1][j]
+    return dp[n][W]
+print("Knapsack Problem (Tabulation): ",KnapSack_Iterative(10,[5,4,6,3],DP_array_1))
+print()
