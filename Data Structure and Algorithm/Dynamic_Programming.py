@@ -346,3 +346,88 @@ def KnapSack_Iterative(W,wt,val):
     return dp[n][W]
 print("Knapsack Problem (Tabulation): ",KnapSack_Iterative(10,[5,4,6,3],DP_array_1))
 print()
+
+"""
+DP - 8 :
+    - Optimal Strategy for a game
+    - I/P : arr = [20,5]; O/P : 20
+    - Rules
+        = Two player game
+        = Both players get turns one by one
+        = Give No. of Coins is even initially
+        = You always make the first move.
+        = Both player play optimally
+
+1st Recursive Solution:
+    - We find the sum of values before recursive calls.
+    - We make two recursive calls and take the maximum of two:
+        - Pick the left corner coin 
+        - Pick the right corner coin
+    - Idea of the the recursive - Sum optimal value that opponent can get the remaining coins
+
+Tabulation Solution : 
+    dp[i][j] = {
+                    max(arr[i],arr[j]) if i+1=j;
+                    max{
+                        arr[i] + min(dp[i+2][j],dp[i+1][j-1]),
+                        arr[j] + min(dp[i+1]pj-1),dp[i][j-2])
+                        }
+               }
+    dp[0][n-1] is the final result
+"""
+def Optimal_Strategy_Recursive_1(arr):
+    return Optimal_Strategy_Utility_1(arr,0,len(arr)-1,sum(arr))
+def Optimal_Strategy_Utility_1(arr,i,j,sum):
+    if i+1 == j:
+        return max(arr[i],arr[j])
+    return max(sum-Optimal_Strategy_Utility_1(arr,i+1,j,sum-arr[i]),sum - Optimal_Strategy_Utility_1(arr,i,j-1,sum-arr[j]))
+print("Optimal Strategy for the game (Recursive-1): ",Optimal_Strategy_Recursive_1([8,15,7,3]))
+
+def Optimal_Strategy_Recursive_2(arr,i,j):
+    if i+1 == j:
+        return max(arr[i],arr[j])
+    return max(min(Optimal_Strategy_Recursive_2(arr,i+2,j),Optimal_Strategy_Recursive_2(arr,i+1,j-1)+arr[i]),min(Optimal_Strategy_Recursive_2(arr,i+1,j-1),Optimal_Strategy_Recursive_2(arr,i,j-2)+arr[j]))
+print("Optimal Strategy for the game (Recursive-2): ",Optimal_Strategy_Recursive_2([20,5,4,6],0,3))
+
+def Optimal_Strategy_Tabulation(arr):
+    n = len(arr)
+    dp = [[0 for x in range(n)] for x in range(n)]
+    for i in range(n-1):
+        dp[i][i+1] = max(arr[i],arr[i+1])
+    for gap in range(3,n,2):
+        for i in range(n-gap):
+            j = i+gap
+            dp[i][j] = max(arr[i]+min(dp[i+2][j],dp[i+1][j-1]),arr[j]+min(dp[i+1][j-1],dp[i][j-2]))
+    return dp[0][n-1]
+print("Optimal Strategy for a game (Tabulation): ",Optimal_Strategy_Tabulation([20,5,4,6,8,3]))
+print()
+
+"""
+DP - 9
+    - Subset Sum Problem
+Tabulation Solution : 
+    if (j<arr[i-1]){
+        dp[i][j] = dp[i-1][j-1]
+    else:
+        dp[i][j] = dp[i-1][j] + dp[i-1][j-arr[i-1]]
+    }
+"""
+def Subset_Sum_Recursive(arr,n,sum):
+    if n==0:
+        return 1 if sum==0 else 0
+    return Subset_Sum_Recursive(arr,n-1,sum)+Subset_Sum_Recursive(arr,n-1,sum-arr[n-1])
+print("Subset Sum Problem (Recursive): ",Subset_Sum_Recursive([2,5,3],len([2,5,3]),5))
+def Subset_Sum_Tabulation(arr,sum):
+    n = len(arr)
+    dp = [[0 for x in range(sum+1)] for x in range(n+1)]
+    for i in range(n+1):
+        dp[i][0] = 1
+    for i in range(1,n+1):
+        for j in range(1,sum+1):
+            if j < arr[i-1]:
+                dp[i][j] = dp[i-1][j]
+            else:
+                dp[i][j] = dp[i-1][j] + dp[i-1][j-arr[i-1]]
+    return dp[n][sum]
+print("Subset Sum Problem (Tabulation): ",Subset_Sum_Tabulation([2,5,3],5))
+print()
