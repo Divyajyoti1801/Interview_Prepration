@@ -431,3 +431,96 @@ def Subset_Sum_Tabulation(arr,sum):
     return dp[n][sum]
 print("Subset Sum Problem (Tabulation): ",Subset_Sum_Tabulation([2,5,3],5))
 print()
+
+"""
+DP - 10
+    - Egg Dropping Puzzle : Find Minimum trials in worst case
+    - e : No. of Eggs ; f : No. of Floors
+    - I/P : e = 1, f = 10 ; O/P : 10
+    - Rules to Consider: 
+        = Egg may break from 1st Floor
+        = Egg may not break from the top floor
+        = if an Egg breaks from a floor, it will break from higher floor also.
+Algorithm : 
+    - Let res(f,e) be the minimum trials in the worst case for 'f' floors and 'e' eggs.
+    - res(f,e) = (f)Min(x=1)[Max(Breaks,Does not Break)]+1 ; 1 <= x <= f
+"""
+def Egg_Drop_Puzzle(n,k):
+    if(k==1 or k==0):
+        return k
+    if(n==1):
+        return k
+    min = sys.maxsize
+    
+    for x in range(1,k+1):
+        res = max(Egg_Drop_Puzzle(n-1,x-1),Egg_Drop_Puzzle(n,k-x)) # type: ignore
+        if res < min:
+            min = res
+    return min + 1
+print("Minimum number of trials in worst case, 2 eggs and 10 floor is",Egg_Drop_Puzzle(2,10))
+print()
+
+"""
+DP - 11 
+    - Matrix Chain Multiplication
+    - arr1[n1][m1] * arr2[n2][m2]; only happen if m1 == n2 
+    - I/P : [2,1,3,4] ; O/P : 20
+    - Input array is the dimension of the matrix
+"""
+def Matrix_Chain_Multiplication_Recursion(arr,i,j):
+    if(i+1==j):
+        return 0
+    res = float("inf")
+    for k in range(i+1,j):
+        res = min(res,Matrix_Chain_Multiplication_Recursion(arr,i,k)+Matrix_Chain_Multiplication_Recursion(arr,k,j)+arr[i]*arr[j]*arr[k]) # type: ignore
+    return res
+print("Matrix Chain Multiplication (Recursion): ",Matrix_Chain_Multiplication_Recursion([2,1,3,4],0,len([2,1,3,4])-1))
+def Matrix_Chain_Multiplication_Tabulation(arr):
+    n = len(arr)
+    dp = [[None for x in range(n)] for x in range(n)]
+    for i in range(0,n-1):
+        dp[i][i+1] = 0 # type: ignore
+    for gap in range(2,n):
+        for i in range(0,n-gap):
+            j = i+gap
+            dp[i][j] =float("inf") # type: ignore
+            for k in range(i+1,j):
+                dp[i][j] = min(dp[i][j],dp[i][k]+dp[k][j]+arr[i]*arr[k]*arr[j]) # type: ignore
+    return dp[0][n-1]
+print("Matrix Chain Multiplication (Tabulation): ",Matrix_Chain_Multiplication_Tabulation([2,1,3,4]))
+print()
+
+"""
+DP - 12
+    - Count Binary-Search-Tree with n keys.
+    - I/P: n = 1 ; O/P : 1
+"""
+def factorial_utility(n):
+    res = 1
+    for i in range(1,n+1):
+        res *= i
+    return res
+
+def binomial_coefficient_utility(n,k):
+    res = 1
+    if k>n-k:
+        k = n-k
+    for i in range(k):
+        res *= (n-i)
+        res //= (i+1)
+    return res
+
+def catalan_number_utility(n):
+    c = binomial_coefficient_utility(2*n,n)
+    return c // (n+1)
+
+def Count_BST(n):
+    count = catalan_number_utility(n)
+    return count
+
+def Count_Binary_Tree(n):
+    count = catalan_number_utility(n)
+    return count * factorial_utility(n)
+print("Count of BST with 5 node is ",Count_BST(5))
+print("Count of Binary Trees with 5 node is : ",Count_Binary_Tree(5))
+print()
