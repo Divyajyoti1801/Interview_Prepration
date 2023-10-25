@@ -2,6 +2,7 @@
 DYNAMIC PROGRAMMING
 """
 import sys
+
 """
 Introduction
     - In simple words, it is an organization over plain recursion.
@@ -524,3 +525,102 @@ def Count_Binary_Tree(n):
 print("Count of BST with 5 node is ",Count_BST(5))
 print("Count of Binary Trees with 5 node is : ",Count_Binary_Tree(5))
 print()
+
+"""
+DP - 11
+    - Maximum Sum with No Two Consecutive
+Idea for Recursive Sol:
+    - We have two choices for every item:
+        = It is part of the result
+        = It is not part of the result
+    - We first consider the choices for the last item:
+        = Max_Rec(arr,n-2) + arr[n-1]
+        = Max_Rec(arr,n-1)
+"""
+def Max_Sum_No_Consecutive_Recursion(arr,n):
+    if n==1:
+        return arr[0]
+    if n==2:
+        return max(arr[0],arr[1])
+    return max(Max_Sum_No_Consecutive_Recursion(arr,n-1),arr[n-1] + Max_Sum_No_Consecutive_Recursion(arr,n-2))
+print("Maximum Sum with no two consecutive (Recursive): ",Max_Sum_No_Consecutive_Recursion([10,5,15,20],4))
+def Max_Sum_No_Consecutive_Tabulation(arr):
+    prev_prev = arr[0]
+    prev = max(arr[0],arr[1])
+    res = prev
+    for i in range(3,len(arr)+1):
+        res = max(prev,prev_prev+arr[i-1])
+        prev_prev = prev
+        prev = res
+    return res
+print("Maximum Sum with no two consecutive (Tabulation): ",Max_Sum_No_Consecutive_Tabulation([10,20,30,40,50]))
+print()
+
+"""
+DP - 12
+    - Palindromic Partitioning
+    - I/P : str = "geek" ; O/P : 2
+Idea of Recursive Solution:
+    - Pal_Part(s,i,j) = {
+                          0 : if s[i...j] is a palindrome
+                          (j-1)Min(k=1)[Pal_Part(s,i,k) + Pal_Part(s,k+1,j) + 1]
+                        }
+"""
+def check_palindrome(s,i,j):
+    while i<j:
+        if(s[i]!=s[j]):
+            return False
+        i+=1
+        j-=1
+    return True
+def Palindromic_Partitioning_Recursive(s,i,j):
+    if check_palindrome(s,i,j):
+        return 0
+    res = float("inf")
+    for k in range(i,j):
+        res = min(res,1+Palindromic_Partitioning_Recursive(s,i,k)+Palindromic_Partitioning_Recursive(s,k+1,j)) # type: ignore
+    return res
+print("Palindromic Partition (Recursive): ",Palindromic_Partitioning_Recursive("geek",0,len("geek")-1))
+def Palindromic_Partition_Tabulation(s):
+    n = len(s)
+    dp = [[0 for x in range(n)] for x in range(n)]
+    for gap in range(n):
+        for i in range(n-gap):
+            j = i + gap
+            if(check_palindrome(s,i,j)):
+                dp[i][j] = 0
+            else:
+                dp[i][j] = float("inf") # type: ignore
+                for k in range(i,j):
+                    dp[i][j] = min(dp[i][j],1+dp[i][k]+dp[k+1][j])
+    return dp[0][n-1]
+print("Palindromic Partition (Tabulation): ",Palindromic_Partition_Tabulation("geek"))
+print()
+"""
+DP - 13
+    - Allocate Minimum Pages
+
+"""
+def Allocate_Minimum_Pages_Recursion(arr,n,k):
+    if k==1:
+        return sum(arr[0:n])
+    if n==1:
+        return arr[0]
+    res = float("inf")
+    for i in range(1,n):
+        res = min(res,max(Allocate_Minimum_Pages_Recursion(arr,i,k-1),sum(arr[i:n]))) # type: ignore
+    return res
+print("Allocate Minimum Pages (Recursion): ",Allocate_Minimum_Pages_Recursion([10,20,30,40],4,2))
+def Allocate_Minimum_Pages_Tabulation(arr,n,k):
+    dp=[[None]*(n+1)]*(k+1)
+    for i in range(1,n+1):
+        dp[1][i] = sum(arr[0:i])
+    for i in range(1,k+1):
+        dp[i][1] = arr[0]
+    for i in range(2,k+1):
+        for j in range(2,n+1):
+            res = float("inf")
+            for p in range(1,j):
+                res = min(res,max(dp[i-1][p],sum(arr[p:j])))
+    return dp[k][n]
+print("Allocate Minimum Pages (Tabulation): ",Allocate_Minimum_Pages_Tabulation([10,20,30],3,2))
