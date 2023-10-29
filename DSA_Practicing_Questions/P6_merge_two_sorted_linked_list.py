@@ -35,35 +35,25 @@ print_LL(head_2)
 print()
 
 def merge_of_two_sorted_linked_list(head_1,head_2):
-    h1= head_1
-    h2= head_2
-    x = Node(0)
-    y= x
+    h1 = head_1
+    h2 = head_2
+    res_head  = Node(-1)
+    temp = res_head
     
     while h1 and h2:
-        y.next = Node(0) # type: ignore
-        y = y.next
-        if h1.data<= h2.data:
-            y.data = h1.data
+        if h1.data < h2.data:
+            temp.next = h1
             h1 = h1.next
         else:
-            y.data= h2.data
-            h2  = h2.next
+            temp.next = h2
+            h2 = h2.next
+        temp = temp.next
     
     if h1:
-        while h1:
-            y.next = Node(0)#type:ignore
-            y = y.next
-            y.data = h1.data
-            h1 = h1.next
-    if h2:
-        while h2:
-            y.next = Node(0) #type:ignore
-            y = y.next
-            y.data = h2.data
-            h2 = h2.next
-    return x.next
-            
+        temp.next = h1
+    elif h2:
+        temp.next = h2
+    return res_head.next
             
         
 print("Merging Two Sorted Linked List: ")
