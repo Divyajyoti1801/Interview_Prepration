@@ -12,10 +12,26 @@ Return the minimum integer k such that she can eat all the bananas within h hour
 Input: piles = [3,6,7,11], h = 8
 Output: 4
 """
+import math
 
 
 def koko_eating_bananas(piles, h):
-    return
+    l, r = 0, max(piles)
+    res = r
+
+    while l <= r:
+        k = l + ((r-l)//2)
+        hours = 0
+
+        for p in piles:
+            hours += math.ceil(p/k)
+
+        if hours <= h:
+            res = min(res, k)
+            r = k - 1
+        else:
+            l = k + 1
+    return res
 
 
 print("Koko eating bananas: ", koko_eating_bananas([3, 6, 7, 11], 8))
