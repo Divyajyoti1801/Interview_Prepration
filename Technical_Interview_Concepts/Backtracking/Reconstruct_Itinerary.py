@@ -13,7 +13,31 @@ Input: tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
 Output: ["JFK","MUC","LHR","SFO","SJC"]
 """
 
-def reconstruct_itinerary(tickets):
-    return
 
-print("Reconstruct Itinerary: ", reconstruct_itinerary([["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]))
+def reconstruct_itinerary(tickets):
+    graph = {}
+
+    for src, dest in tickets:
+        if src in graph:
+            graph[src].append(dest)
+        else:
+            graph[src] = [dest]
+
+    for src in graph.keys():
+        graph[src].sort(reverse=True)
+
+    stack = []
+    res = []
+    stack.append("JFK")
+
+    while len(stack) > 0:
+        elem = stack[-1]
+        if elem in graph and len(graph[elem]) > 0:
+            stack.append(graph[elem].pop())
+        else:
+            res.append(stack.pop())
+    return res[::-1]
+
+
+print("Reconstruct Itinerary: ", reconstruct_itinerary(
+    [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]))
